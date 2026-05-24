@@ -5,15 +5,11 @@ interface LogRowProps {
   step: string
   text?: string
   quote?: string
-  sub?: string
-  tool: string
-  timestamp: string
 }
 
-function LogRow({ state, step, text, quote, sub, tool, timestamp }: LogRowProps) {
+function LogRow({ state, step, text, quote }: LogRowProps) {
   return (
     <div className="log-row" data-state={state}>
-      <div className="log-row__time">{timestamp}</div>
       <div className="log-row__icon">
         <span className="log-icon" data-state={state} />
       </div>
@@ -24,25 +20,10 @@ function LogRow({ state, step, text, quote, sub, tool, timestamp }: LogRowProps)
         ) : (
           <div className="log-row__text">{text}</div>
         )}
-        {sub && state !== 'idle' && (
-          <div className="log-row__sub">
-            {sub.split(' · ').map((part, i) => <span key={i}>{part}</span>)}
-          </div>
-        )}
       </div>
-      <div className="log-row__tool">{tool}</div>
     </div>
   )
 }
-
-function fmtTime(msFromStart: number) {
-  const s = Math.floor(msFromStart / 1000)
-  const m = Math.floor(s / 60).toString().padStart(2, '0')
-  const sec = (s % 60).toString().padStart(2, '0')
-  return `${m}:${sec}.00`
-}
-
-const SESSION_START = Date.now() - 40000
 
 export default function ResearchLog() {
   return (
@@ -62,16 +43,13 @@ export default function ResearchLog() {
         <span style={{ width: '100%' }} />
       </div>
       <div className="log">
-        {LOG_ENTRIES.map(({ entry, state, displayText, startedAt }) => (
+        {LOG_ENTRIES.map(({ entry, state, displayText }) => (
           <LogRow
             key={entry.id}
             state={state}
-            step={entry.step}
+            step={entry.step.replace(/^\d+ · /, '')}
             text={entry.quote ? undefined : displayText}
             quote={entry.quote ? displayText : undefined}
-            sub={entry.id === 'sponsors' ? 'Reading sponsor prizes · API docs · last year\'s winners' : undefined}
-            tool={entry.id.split('-')[0]}
-            timestamp={fmtTime(startedAt - SESSION_START)}
           />
         ))}
         <div className="synergy">

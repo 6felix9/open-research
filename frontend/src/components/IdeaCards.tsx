@@ -5,13 +5,6 @@ function getSponsor(id: string) {
   return SPONSORS.find(s => s.id === id)!
 }
 
-function PinIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.5 1.5l4 4-2 1-3 3 1 4-2-1.5L4 16l4.5-4.5L7 9.5l3-3 1-2z"/>
-    </svg>
-  )
-}
 
 function ExpandIcon() {
   return (
@@ -29,28 +22,15 @@ function CollapseIcon() {
   )
 }
 
-function CompareIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="5" height="10" rx="1"/>
-      <rect x="9" y="3" width="5" height="10" rx="1"/>
-    </svg>
-  )
-}
-
 interface IdeaCardProps {
   idea: Idea
-  isPinned: boolean
   isExpanded: boolean
-  onPin: () => void
   onExpand: () => void
 }
 
-function IdeaCard({ idea, isPinned, isExpanded, onPin, onExpand }: IdeaCardProps) {
-  const DIFF_LABELS = ['', 'trivial', 'moderate', 'ambitious'] as const
-
+function IdeaCard({ idea, isExpanded, onExpand }: IdeaCardProps) {
   return (
-    <div className={`idea ${isPinned ? 'is-pinned' : ''}`}>
+    <div className="idea">
       <div className="idea__head">
         <div className="ring__wrap">
           <div className="ring" style={{ '--pct': idea.match } as React.CSSProperties}>
@@ -67,12 +47,6 @@ function IdeaCard({ idea, isPinned, isExpanded, onPin, onExpand }: IdeaCardProps
           <div className="idea__pitch">{idea.pitch}</div>
         </div>
         <div className="idea__actions">
-          <button className="icon-btn" title="Add to compare">
-            <CompareIcon />
-          </button>
-          <button className="icon-btn" aria-pressed={isPinned} onClick={onPin} title="Pin">
-            <PinIcon />
-          </button>
           <button className="icon-btn" onClick={onExpand} title="Expand">
             {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
           </button>
@@ -101,10 +75,6 @@ function IdeaCard({ idea, isPinned, isExpanded, onPin, onExpand }: IdeaCardProps
       </a>
 
       <div className="idea__footer">
-        <span>
-          build effort ·{' '}
-          <span style={{ color: 'var(--ink-1)' }}>{DIFF_LABELS[idea.difficulty]}</span>
-        </span>
         <span className="idea__diff">
           {[0, 1, 2].map(i => (
             <span key={i} className={`idea__diff__bar ${i < idea.difficulty ? 'on' : ''}`} />
@@ -135,8 +105,9 @@ function IdeaCard({ idea, isPinned, isExpanded, onPin, onExpand }: IdeaCardProps
 type FilterType = 'all' | 'highMatch' | 'easy' | 'pinned'
 type SortType = 'match' | 'diff' | 'order'
 
+const ORDER = [...IDEAS]
+
 export default function IdeaCards() {
-  const [pinned, setPinned] = useState<Set<string>>(new Set())
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [filter, setFilter] = useState<FilterType>('all')
   const [sort, setSort] = useState<SortType>('match')
@@ -150,18 +121,18 @@ export default function IdeaCards() {
     })
   }
 
-  let shown = [...IDEAS]
-  if (filter === 'pinned') shown = shown.filter(i => pinned.has(i.id))
+  let shown = [...ORDER]
   if (filter === 'highMatch') shown = shown.filter(i => i.match >= 80)
   if (filter === 'easy') shown = shown.filter(i => i.difficulty <= 2)
+  if (filter === 'pinned') shown = []
   if (sort === 'match') shown.sort((a, b) => b.match - a.match)
   if (sort === 'diff') shown.sort((a, b) => a.difficulty - b.difficulty)
 
   const filters: Array<{ id: FilterType; label: string; count: number }> = [
     { id: 'all',       label: 'All',       count: IDEAS.length },
-    { id: 'highMatch', label: '≥80 match', count: IDEAS.filter(i => i.match >= 80).length },
-    { id: 'easy',      label: 'Easy build', count: IDEAS.filter(i => i.difficulty <= 2).length },
-    { id: 'pinned',    label: 'Pinned',    count: pinned.size },
+    { id: 'highMatch', label: '≥80 Match', count: IDEAS.filter(i => i.match >= 80).length },
+    { id: 'easy',      label: 'Easy Build', count: IDEAS.filter(i => i.difficulty <= 2).length },
+    { id: 'pinned',    label: 'Pinned',    count: 0 },
   ]
 
   return (
@@ -181,11 +152,11 @@ export default function IdeaCards() {
           ))}
         </div>
         <div className="ideas-toolbar__right">
-          <span style={{ color: 'var(--ink-4)', letterSpacing: '0.12em', fontSize: 9.5, textTransform: 'uppercase' }}>sort</span>
-          <div className="segmented" style={{ padding: 2, maxWidth: 200 }}>
-            {(['match', 'diff', 'order'] as SortType[]).map(o => (
-              <button key={o} aria-pressed={sort === o} onClick={() => setSort(o)}>
-                {o === 'diff' ? 'effort' : o}
+          <span className="ideas-toolbar__sort-label">Sort</span>
+          <div className="segmented" style={{ padding: 2 }}>
+            {([['match', 'match'], ['diff', 'effort'], ['order', 'stream']] as [SortType, string][]).map(([id, label]) => (
+              <button key={id} aria-pressed={sort === id} onClick={() => setSort(id)}>
+                {label}
               </button>
             ))}
           </div>
@@ -196,9 +167,7 @@ export default function IdeaCards() {
           <IdeaCard
             key={idea.id}
             idea={idea}
-            isPinned={pinned.has(idea.id)}
             isExpanded={expanded.has(idea.id)}
-            onPin={() => toggle(setPinned, idea.id)}
             onExpand={() => toggle(setExpanded, idea.id)}
           />
         ))}

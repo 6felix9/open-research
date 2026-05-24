@@ -425,7 +425,7 @@
 
 .log-row {
   display: grid;
-  grid-template-columns: 56px 18px 1fr auto;
+  grid-template-columns: 18px 1fr;
   gap: 12px;
   padding: 7px 20px;
   align-items: start;
@@ -629,9 +629,17 @@
 .ideas-toolbar__right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
+  color: var(--ink-3);
+}
+
+.ideas-toolbar__sort-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--ink-3);
 }
 
@@ -680,9 +688,6 @@
   box-shadow: 0 0 0 1px var(--amber-glow);
 }
 
-.idea.is-pinned {
-  border-color: color-mix(in oklch, var(--amber) 35%, var(--line-0));
-}
 
 .idea__head {
   display: grid;
@@ -1029,6 +1034,46 @@
   background: transparent;
   color: var(--ink-1);
   border: 1px solid var(--line-1);
+}
+
+/* Advanced disclosure */
+.advanced-toggle {
+  border-top: 1px dashed var(--line-0);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.advanced-toggle summary {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.advanced-toggle summary::-webkit-details-marker { display: none; }
+
+.advanced-toggle summary::after {
+  content: '›';
+  font-size: 14px;
+  transition: transform 200ms ease;
+}
+
+.advanced-toggle[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.advanced-toggle__body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: 16px;
 }
 
 /* ============================================================

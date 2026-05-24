@@ -21,7 +21,6 @@ interface SidebarProps {
 
 const DEPTH_LABELS = ['S', 'M', 'L', 'XL']
 const DEPTH_NAMES = ['shallow', 'balanced', 'deep', 'obsessive']
-const DEPTH_TIMES = [12, 22, 38, 58]
 
 export default function Sidebar({
   selectedSponsors, toggleSponsor,
@@ -86,10 +85,7 @@ export default function Sidebar({
         </div>
 
         <div className="section">
-          <div className="section__header">
-            <div className="section__label">Theme</div>
-            <div className="section__hint">⌘K</div>
-          </div>
+          <div className="section__label">Theme</div>
           <div className="field">
             <textarea
               rows={2}
@@ -100,66 +96,71 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="section">
-          <div className="section__label">Seed idea (optional)</div>
-          <div className="field">
-            <textarea
-              rows={3}
-              placeholder="A loose hunch or constraint — the agent will branch from it."
-              value={seed}
-              onChange={e => setSeed(e.target.value)}
-            />
-          </div>
-        </div>
+        <details className="advanced-toggle">
+          <summary>Advanced</summary>
+          <div className="advanced-toggle__body">
+            <div className="section">
+              <div className="section__label">Seed idea (optional)</div>
+              <div className="field">
+                <textarea
+                  rows={3}
+                  placeholder="A loose hunch or constraint — the agent will branch from it."
+                  value={seed}
+                  onChange={e => setSeed(e.target.value)}
+                />
+              </div>
+            </div>
 
-        <div className="section">
-          <div className="section__label">Team skills</div>
-          <div className="tags">
-            {TEAM_SKILLS.map(s => (
-              <button
-                key={s}
-                className="tag"
-                aria-pressed={skills.has(s)}
-                onClick={() => toggleSkill(s)}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
+            <div className="section">
+              <div className="section__label">Team skills</div>
+              <div className="tags">
+                {TEAM_SKILLS.map(s => (
+                  <button
+                    key={s}
+                    className="tag"
+                    aria-pressed={skills.has(s)}
+                    onClick={() => toggleSkill(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div className="section">
-          <div className="section__label">Time budget</div>
-          <div className="segmented">
-            {TIME_BUDGET.map(t => (
-              <button
-                key={t}
-                aria-pressed={timeBudget === t}
-                onClick={() => setTimeBudget(t)}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
+            <div className="section">
+              <div className="section__label">Time budget</div>
+              <div className="segmented">
+                {TIME_BUDGET.map(t => (
+                  <button
+                    key={t}
+                    aria-pressed={timeBudget === t}
+                    onClick={() => setTimeBudget(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div className="section">
-          <div className="section__header">
-            <div className="section__label">Research depth</div>
-            <div className="section__meta">{DEPTH_NAMES[depth]}</div>
+            <div className="section">
+              <div className="section__header">
+                <div className="section__label">Research depth</div>
+                <div className="section__meta">{DEPTH_NAMES[depth]}</div>
+              </div>
+              <div className="segmented">
+                {DEPTH_LABELS.map((label, i) => (
+                  <button
+                    key={label}
+                    aria-pressed={depth === i}
+                    onClick={() => setDepth(i)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="segmented">
-            {DEPTH_LABELS.map((label, i) => (
-              <button
-                key={label}
-                aria-pressed={depth === i}
-                onClick={() => setDepth(i)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+        </details>
       </div>
 
       <div className="sidebar__cta">
@@ -172,15 +173,8 @@ export default function Sidebar({
           <span>
             {runState === 'running' ? 'Researching…' : runState === 'done' ? 'Run again' : 'Research ideas'}
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="run-btn__kbd">⌘ ↵</span>
-            <span className="run-btn__arrow">→</span>
-          </span>
+          <span className="run-btn__arrow">→</span>
         </button>
-        <div className="cta-meta">
-          <span>{selectedSponsors.size + selectedInterests.size} signals locked</span>
-          <span>~{DEPTH_TIMES[depth]}s</span>
-        </div>
       </div>
     </aside>
   )

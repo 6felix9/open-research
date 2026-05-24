@@ -50,11 +50,7 @@ function App() {
         <IdeaCards />
       </main>
 
-      <div className="shortcuts">
-        <div className="shortcuts__line"><kbd>⌘</kbd><kbd>K</kbd> focus theme</div>
-        <div className="shortcuts__line"><kbd>⌘</kbd><kbd>↵</kbd> run research</div>
-        <div className="shortcuts__line"><kbd>P</kbd> pin hovered idea</div>
-      </div>
+
     </div>
   )
 }
