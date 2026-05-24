@@ -1,121 +1,61 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
+import Sidebar from './components/Sidebar'
+import ResearchLog from './components/ResearchLog'
+import IdeaCards from './components/IdeaCards'
+
+function toggleSet<T>(prev: Set<T>, val: T): Set<T> {
+  const next = new Set(prev)
+  if (next.has(val)) next.delete(val)
+  else next.add(val)
+  return next
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedSponsors, setSelectedSponsors] = useState(
+    new Set(['groq', 'anthropic', 'elevenlabs', 'supabase'])
+  )
+  const [selectedInterests, setSelectedInterests] = useState(
+    new Set(['agents', 'voice', 'tool-use', 'developer-tools', 'RAG'])
+  )
+  const [theme, setTheme] = useState("tools that make creative work feel less lonely")
+  const [seed, setSeed] = useState("")
+  const [skills, setSkills] = useState(new Set(['frontend', 'backend', 'ML']))
+  const [timeBudget, setTimeBudget] = useState('36h')
+  const [depth, setDepth] = useState(1)
+  const [runState] = useState<'idle' | 'running' | 'done'>('done')
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <Sidebar
+        selectedSponsors={selectedSponsors}
+        toggleSponsor={id => setSelectedSponsors(prev => toggleSet(prev, id))}
+        selectedInterests={selectedInterests}
+        toggleInterest={tag => setSelectedInterests(prev => toggleSet(prev, tag))}
+        theme={theme}
+        setTheme={setTheme}
+        seed={seed}
+        setSeed={setSeed}
+        skills={skills}
+        toggleSkill={s => setSkills(prev => toggleSet(prev, s))}
+        timeBudget={timeBudget}
+        setTimeBudget={setTimeBudget}
+        depth={depth}
+        setDepth={setDepth}
+        runState={runState}
+        onRun={() => {}}
+      />
+      <main className="right">
+        <ResearchLog />
+        <IdeaCards />
+      </main>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <div className="shortcuts">
+        <div className="shortcuts__line"><kbd>⌘</kbd><kbd>K</kbd> focus theme</div>
+        <div className="shortcuts__line"><kbd>⌘</kbd><kbd>↵</kbd> run research</div>
+        <div className="shortcuts__line"><kbd>P</kbd> pin hovered idea</div>
+      </div>
+    </div>
   )
 }
 
