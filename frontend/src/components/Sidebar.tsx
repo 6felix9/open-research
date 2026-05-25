@@ -35,7 +35,7 @@ export default function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
-        <div className="brand-mark" />
+        <img src="/image.png" className="brand-mark" alt="" />
         <div>
           <div className="brand-title">Open Research</div>
           <div className="brand-sub">agentic hackathon ideation</div>

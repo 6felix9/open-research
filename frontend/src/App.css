@@ -38,21 +38,14 @@
 .brand-mark {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  position: relative;
-  background:
-    radial-gradient(circle at 35% 35%, var(--amber) 0%, var(--amber) 18%, transparent 19%),
-    conic-gradient(from 180deg, var(--ink-4), var(--ink-2), var(--ink-4));
-  box-shadow: 0 0 0 1px var(--line-1), 0 0 24px var(--amber-glow);
   flex-shrink: 0;
+  object-fit: contain;
+  border-radius: 6px;
 }
 
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  border: 1px dashed var(--ink-3);
+:root:not([data-theme="light"]) .brand-mark,
+[data-theme="dark"] .brand-mark {
+  filter: invert(1) brightness(0.85);
 }
 
 .brand-title {
