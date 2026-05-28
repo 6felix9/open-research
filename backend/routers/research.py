@@ -1,6 +1,10 @@
 import asyncio
+import logging
+
 from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
+
+log = logging.getLogger(__name__)
 from ..agents.sponsor_profiler import profile_sponsor_task
 from ..agents.prior_art import research_prior_art_task
 from ..agents.synthesizer import synthesize_task
@@ -24,6 +28,11 @@ def _parse_csv(value: str) -> list[str]:
 
 async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills: str, time_budget: str, depth: int):
     sponsor_names = _parse_csv(sponsors)
+    log.info(
+        "research: request — sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, depth=%d",
+        sponsor_names, _parse_csv(interests), theme or "none", seed or "none",
+        _parse_csv(skills), time_budget or "unset", depth,
+    )
     sponsor_profiles = {}
 
     yield sse(

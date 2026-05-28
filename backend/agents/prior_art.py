@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import logging
+import time
+
 from agents import Agent, Runner
 
 from ..core.fallback import fallback_prior_art_summary, has_api_key
 from ..core.mock_search import mock_search_prior_art_tool
+
+log = logging.getLogger(__name__)
 
 
 INSTRUCTIONS = """
@@ -32,12 +37,17 @@ prior_art_agent = Agent(
 
 async def research_prior_art_task(sponsor_name: str, sponsor_profile: str) -> str:
     if not has_api_key():
+        log.info("prior_art [%s]: no API key — using fallback summary", sponsor_name)
         return fallback_prior_art_summary(sponsor_name)
+    log.info("prior_art [%s]: starting agent (profile: %d chars)", sponsor_name, len(sponsor_profile))
     prompt = (
         f"Sponsor: {sponsor_name}\n\n"
         f"Sponsor profile summary:\n{sponsor_profile[:800]}\n\n"
         "Search Devpost and X for prior hackathon projects that used this sponsor, "
         "then produce the three-point prior-art summary."
     )
+    t0 = time.perf_counter()
     result = await Runner.run(prior_art_agent, prompt)
-    return str(result.final_output)
+    summary = str(result.final_output)
+    log.info("prior_art [%s]: done in %.1fs (%d chars)", sponsor_name, time.perf_counter() - t0, len(summary))
+    return summary

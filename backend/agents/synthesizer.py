@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
+import time
 from typing import Literal
 
 from agents import Agent, Runner
 from pydantic import BaseModel
 
 from ..core.fallback import fallback_synthesis, has_api_key
+
+log = logging.getLogger(__name__)
 
 
 class Breakdown(BaseModel):
@@ -77,7 +81,13 @@ async def synthesize_task(
     prior_art_summaries: dict[str, str],
 ) -> SynthesisResult:
     if not has_api_key():
+        log.info("synthesizer: no API key — using fallback synthesis")
         return fallback_synthesis(sponsors, interests, theme, seed, skills, time_budget)  # type: ignore[return-value]
+    log.info(
+        "synthesizer: starting (sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, profiles=%d, prior_art=%d)",
+        sponsors, interests, theme or "none", seed or "none", skills, time_budget or "unset",
+        len(sponsor_profiles), len(prior_art_summaries),
+    )
     profiles_block = "\n\n".join(
         f"### {name}\n{text[:600]}" for name, text in sponsor_profiles.items()
     ) or "No sponsor profiles available."
@@ -106,5 +116,10 @@ PRIOR ART SUMMARIES
 
 Generate 5–8 original hackathon ideas following the output schema.
 """
+    t0 = time.perf_counter()
     result = await Runner.run(synthesizer_agent, prompt)
-    return result.final_output
+    synthesis = result.final_output
+    log.info("synthesizer: done in %.1fs (%d ideas)", time.perf_counter() - t0, len(synthesis.ideas))
+    for idea in synthesis.ideas:
+        log.info("  → [%d] %s  (difficulty=%d, stack=%s)", idea.match, idea.title, idea.difficulty, idea.stack)
+    return synthesis
