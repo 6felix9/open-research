@@ -1,6 +1,8 @@
 /* ============================================================
    Open Research — design tokens + base reset
    ============================================================ */
+@import "tailwindcss";
+
 :root,
 [data-theme="dark"] {
   /* canvas */
@@ -43,10 +45,10 @@
   --s-7: oklch(0.80 0.130 50);
   --s-8: oklch(0.78 0.140 175);
 
-  /* type */
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* type (use --ff prefix to avoid self-reference in @theme) */
+  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ff-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --ff-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* metrics */
   --r-sm: 4px;
@@ -93,48 +95,117 @@
 }
 
 [data-font="editorial"] {
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ff-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --ff-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 [data-font="technical"] {
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: "IBM Plex Serif", "Iowan Old Style", Georgia, serif;
-  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --ff-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ff-serif: "IBM Plex Serif", "Iowan Old Style", Georgia, serif;
+  --ff-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+@theme {
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  
+  --color-ink-0: var(--ink-0);
+  --color-ink-1: var(--ink-1);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
 
-html, body, #root {
-  height: 100%;
-  background: var(--bg-0);
-  color: var(--ink-1);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  --color-line-0: var(--line-0);
+  --color-line-1: var(--line-1);
+
+  --color-amber-theme: var(--amber);
+  --color-amber-dim: var(--amber-dim);
+  --color-amber-glow: var(--amber-glow);
+  --color-done: var(--done);
+  --color-pending: var(--pending);
+  --color-error: var(--error);
+
+  --font-sans: var(--ff-sans);
+  --font-serif: var(--ff-serif);
+  --font-mono: var(--ff-ff-mono, var(--ff-mono));
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+
+  --animate-chip-flash: chip-flash 900ms ease;
+  --animate-entry-in: entry-in 320ms ease forwards;
+  --animate-pulse-slow: pulse 1.4s ease-in-out infinite;
+  --animate-pulse-icon: pulse-icon 1.2s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+
+  @keyframes chip-flash {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-1px); box-shadow: 0 0 0 2px color-mix(in oklch, var(--c) 50%, transparent); }
+  }
+  @keyframes entry-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--amber-glow); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+  }
+  @keyframes pulse-icon {
+    0%, 100% { box-shadow: 0 0 0 0 var(--amber-glow); }
+    50% { box-shadow: 0 0 0 6px transparent; }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
 }
 
-body {
-  background-image:
-    radial-gradient(1200px 600px at 75% -10%, var(--halo-1), transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, var(--halo-2), transparent 55%);
-  background-attachment: fixed;
+@layer base {
+  html, body, #root {
+    height: 100%;
+    background: var(--bg-0);
+    color: var(--ink-1);
+    font-family: var(--ff-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-image:
+      radial-gradient(1200px 600px at 75% -10%, var(--halo-1), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, var(--halo-2), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  ::selection {
+    background: var(--amber-glow);
+    color: var(--ink-0);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  /* Custom class for theme image inversion in dark mode */
+  [data-theme="dark"] .theme-invert-img,
+  :root:not([data-theme="light"]) .theme-invert-img {
+    filter: invert(1) brightness(0.85);
+  }
 }
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1000;
-  opacity: var(--grain-opacity);
-  mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-
-::selection { background: var(--amber-glow); color: var(--ink-0); }
-
-button { cursor: pointer; }

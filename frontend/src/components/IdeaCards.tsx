@@ -5,7 +5,6 @@ function getSponsor(id: string) {
   return SPONSORS.find(s => s.id === id)!
 }
 
-
 function ExpandIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -30,71 +29,71 @@ interface IdeaCardProps {
 
 function IdeaCard({ idea, isExpanded, onExpand }: IdeaCardProps) {
   return (
-    <div className="idea">
-      <div className="idea__head">
-        <div className="ring__wrap">
-          <div className="ring" style={{ '--pct': idea.match } as React.CSSProperties}>
-            <div className="ring__val">{idea.match}</div>
+    <div className="bg-bg-1 border border-line-0 rounded-lg p-[16px_16px_14px] flex flex-col gap-[12px] relative transition-all duration-[200ms] ease-out hover:border-line-1 focus-within:border-amber-dim focus-within:shadow-[0_0_0_1px_var(--amber-glow)]">
+      <div className="grid grid-cols-[auto_1fr_auto] gap-[12px] items-start">
+        <div className="relative group/ring">
+          <div className="w-[44px] h-[44px] rounded-full relative shrink-0 bg-[conic-gradient(var(--amber)_calc(var(--pct)*1%),var(--bg-3)_0)] before:content-[''] before:absolute before:inset-[3px] before:bg-bg-1 before:rounded-full" style={{ '--pct': idea.match } as React.CSSProperties}>
+            <div className="absolute inset-0 grid place-items-center font-mono text-[12px] text-ink-0 font-medium">{idea.match}</div>
           </div>
-          <div className="ring__breakdown">
-            <div className="bd-row"><span>sponsor fit</span><b>+{idea.breakdown.sponsor}</b></div>
-            <div className="bd-row"><span>interest overlap</span><b>+{idea.breakdown.interest}</b></div>
-            <div className="bd-row"><span>novelty</span><b>+{idea.breakdown.novelty}</b></div>
+          <div className="absolute bottom-[calc(100%+8px)] left-[-8px] bg-bg-2 border border-line-1 rounded-[6px] p-[10px_12px] font-mono text-[11px] text-ink-1 whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-[120ms] ease-out z-10 shadow-[0_8px_24px_oklch(0_0_0/0.4)] group-hover/ring:opacity-100">
+            <div className="grid grid-cols-[auto_auto] gap-[18px] py-[1px] px-0"><span>sponsor fit</span><b className="text-ink-0 font-medium">+{idea.breakdown.sponsor}</b></div>
+            <div className="grid grid-cols-[auto_auto] gap-[18px] py-[1px] px-0"><span>interest overlap</span><b className="text-ink-0 font-medium">+{idea.breakdown.interest}</b></div>
+            <div className="grid grid-cols-[auto_auto] gap-[18px] py-[1px] px-0"><span>novelty</span><b className="text-ink-0 font-medium">+{idea.breakdown.novelty}</b></div>
           </div>
         </div>
         <div>
-          <div className="idea__title">{idea.title}</div>
-          <div className="idea__pitch">{idea.pitch}</div>
+          <div className="font-serif text-[18px] leading-[1.2] text-ink-0">{idea.title}</div>
+          <div className="text-ink-1 text-[12.5px] leading-[1.5] mt-[4px]">{idea.pitch}</div>
         </div>
-        <div className="idea__actions">
-          <button className="icon-btn" onClick={onExpand} title="Expand">
+        <div className="flex gap-[4px] shrink-0">
+          <button className="w-[28px] h-[28px] rounded-[5px] border border-transparent bg-transparent text-ink-3 cursor-pointer grid place-items-center transition-all duration-[120ms] ease-out hover:text-ink-0 hover:border-line-1 hover:bg-bg-2 aria-pressed:text-amber-theme aria-pressed:border-amber-dim aria-pressed:bg-amber-glow [&_svg]:w-[14px] [&_svg]:h-[14px]" onClick={onExpand} title="Expand">
             {isExpanded ? <CollapseIcon /> : <ExpandIcon />}
           </button>
         </div>
       </div>
 
-      <div className="idea__stack">
+      <div className="flex flex-wrap gap-[5px]">
         {idea.stack.map(id => {
           const s = getSponsor(id)
           return (
-            <span key={id} className="stack-chip" style={{ '--c': s.color } as React.CSSProperties}>
-              <span className="stack-chip__dot" />
+            <span key={id} className="inline-flex items-center gap-[5px] py-[3px] pr-[8px] pb-[3px] pl-[6px] font-mono text-[10.5px] rounded-[4px] bg-bg-2 border border-line-0 text-ink-1 tracking-[0.02em]" style={{ '--c': s.color } as React.CSSProperties}>
+              <span className="w-[6px] h-[6px] rounded-full bg-[var(--c,var(--ink-3))]" />
               {s.name}
             </span>
           )
         })}
       </div>
 
-      <a className="idea__priorart" href={idea.priorArt.url} onClick={e => e.preventDefault()}>
+      <a className="flex items-start gap-[10px] p-[10px_12px] bg-bg-0 border border-line-0 rounded-md text-[11.5px] no-underline text-ink-1 transition-all duration-[140ms] ease-out hover:border-amber-dim hover:bg-[color-mix(in_oklch,var(--amber)_6%,var(--bg-0))]" href={idea.priorArt.url} onClick={e => e.preventDefault()}>
         <div>
-          <div className="idea__priorart__label">Prior art · validates direction</div>
-          <div className="idea__priorart__title">{idea.priorArt.title}</div>
-          <div className="idea__priorart__meta">{idea.priorArt.meta}</div>
+          <div className="font-mono text-[9.5px] text-ink-3 tracking-[0.22em] uppercase mb-[2px]">Prior art · validates direction</div>
+          <div className="text-ink-0 text-[12px] font-sans leading-[1.35]">{idea.priorArt.title}</div>
+          <div className="font-mono text-[10px] text-ink-3 mt-[2px]">{idea.priorArt.meta}</div>
         </div>
-        <span className="idea__priorart__arrow">↗</span>
+        <span className="font-mono text-ink-3 ml-auto self-center shrink-0">↗</span>
       </a>
 
-      <div className="idea__footer">
-        <span className="idea__diff">
+      <div className="flex justify-between items-center font-mono text-[10px] text-ink-3 tracking-[0.05em] mt-[2px]">
+        <span className="flex gap-[4px]">
           {[0, 1, 2].map(i => (
-            <span key={i} className={`idea__diff__bar ${i < idea.difficulty ? 'on' : ''}`} />
+            <span key={i} className={`w-[24px] h-[3px] rounded-[2px] ${i < idea.difficulty ? 'bg-amber-theme' : 'bg-bg-3'}`} />
           ))}
         </span>
       </div>
 
       {isExpanded && (
-        <div className="idea__expand">
-          <div className="idea__expand__row">
-            <div className="idea__expand__label">Why now</div>
-            <div className="idea__expand__val">{idea.why}</div>
+        <div className="border-t border-dashed border-line-0 pt-[12px] mt-[4px] grid gap-[10px] text-[12px] text-ink-1">
+          <div className="grid grid-cols-[84px_1fr] gap-[10px]">
+            <div className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink-3 pt-[2px]">Why now</div>
+            <div className="text-ink-1 leading-[1.5]">{idea.why}</div>
           </div>
-          <div className="idea__expand__row">
-            <div className="idea__expand__label">Risks</div>
-            <div className="idea__expand__val">{idea.risks}</div>
+          <div className="grid grid-cols-[84px_1fr] gap-[10px]">
+            <div className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink-3 pt-[2px]">Risks</div>
+            <div className="text-ink-1 leading-[1.5]">{idea.risks}</div>
           </div>
-          <div className="idea__expand__row">
-            <div className="idea__expand__label">Demo moment</div>
-            <div className="idea__expand__val">{idea.demoMoment}</div>
+          <div className="grid grid-cols-[84px_1fr] gap-[10px]">
+            <div className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink-3 pt-[2px]">Demo moment</div>
+            <div className="text-ink-1 leading-[1.5]">{idea.demoMoment}</div>
           </div>
         </div>
       )}
@@ -107,7 +106,7 @@ type SortType = 'match' | 'diff' | 'order'
 
 const ORDER = [...IDEAS]
 
-export default function IdeaCards() {
+export default function IdeaCards({ onViewLog }: { onViewLog?: () => void }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [filter, setFilter] = useState<FilterType>('all')
   const [sort, setSort] = useState<SortType>('match')
@@ -136,33 +135,36 @@ export default function IdeaCards() {
   ]
 
   return (
-    <section className="ideas-pane">
-      <div className="ideas-toolbar">
-        <div className="ideas-toolbar__filters">
+    <section className="grid grid-rows-[auto_1fr] min-h-0 flex-1">
+      <div className="flex items-center justify-between gap-[12px] p-[12px_20px] border-b border-line-0 bg-bg-1 flex-wrap">
+        <div className="flex gap-[4px] flex-wrap">
           {filters.map(f => (
             <button
               key={f.id}
-              className="filter-pill"
+              className="font-mono text-[10.5px] tracking-[0.08em] uppercase text-ink-3 bg-transparent border border-line-0 rounded-[4px] py-[4px] px-[8px] cursor-pointer transition-all duration-[120ms] ease-out hover:text-ink-1 aria-pressed:bg-bg-2 aria-pressed:text-ink-0 aria-pressed:border-line-1"
               aria-pressed={filter === f.id}
               onClick={() => setFilter(f.id)}
             >
               {f.label}
-              <span className="filter-pill__count">{f.count}</span>
+              <span className="text-ink-4 ml-[4px]">{f.count}</span>
             </button>
           ))}
         </div>
-        <div className="ideas-toolbar__right">
-          <span className="ideas-toolbar__sort-label">Sort</span>
-          <div className="segmented" style={{ padding: 2 }}>
+        <div className="flex items-center gap-[8px] font-mono text-[11px] text-ink-3">
+          {onViewLog && (
+            <button className="font-mono text-[10px] tracking-[0.16em] uppercase text-ink-3 bg-transparent border border-line-0 rounded-[4px] py-[4px] px-[9px] cursor-pointer transition-all duration-[120ms] ease hover:text-ink-1 hover:border-line-1 hover:bg-bg-2" onClick={onViewLog}>View log</button>
+          )}
+          <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink-3">Sort</span>
+          <div className="grid grid-flow-col auto-cols-fr bg-bg-0 border border-line-0 rounded-md p-[2px] gap-[2px]" style={{ padding: 2 }}>
             {([['match', 'match'], ['diff', 'effort'], ['order', 'stream']] as [SortType, string][]).map(([id, label]) => (
-              <button key={id} aria-pressed={sort === id} onClick={() => setSort(id)}>
+              <button key={id} className="bg-transparent border-0 font-mono text-[11px] text-ink-2 py-[6px] px-[4px] rounded-[4px] cursor-pointer tracking-[0.04em] aria-pressed:bg-bg-2 aria-pressed:text-ink-0" aria-pressed={sort === id} onClick={() => setSort(id)}>
                 {label}
               </button>
             ))}
           </div>
         </div>
       </div>
-      <div className="ideas-grid">
+      <div className="overflow-y-auto p-[16px_20px_28px] grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-[14px] content-start [&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[4px]">
         {shown.map(idea => (
           <IdeaCard
             key={idea.id}

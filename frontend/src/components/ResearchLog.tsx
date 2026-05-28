@@ -1,48 +1,31 @@
 import { LOG_ENTRIES, SYNERGY_TEXT } from '../data'
+import LogRow from './LogRow'
 
-interface LogRowProps {
-  state: 'done' | 'running' | 'idle'
-  step: string
-  text?: string
-  quote?: string
+interface ResearchLogProps {
+  onClose?: () => void
 }
 
-function LogRow({ state, step, text, quote }: LogRowProps) {
+export default function ResearchLog({ onClose }: ResearchLogProps) {
   return (
-    <div className="log-row" data-state={state}>
-      <div className="log-row__icon">
-        <span className="log-icon" data-state={state} />
-      </div>
-      <div className="log-row__body">
-        <div className="log-row__step">{step}</div>
-        {quote != null ? (
-          <div className="log-row__quote">"{quote}"</div>
-        ) : (
-          <div className="log-row__text">{text}</div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-export default function ResearchLog() {
-  return (
-    <section className="log-pane">
-      <div className="pane-header">
-        <div className="pane-header__left">
-          <div className="pane-title">
-            <span className="dot-led" data-state="done" />
+    <section className="grid grid-rows-[auto_1px_1fr] min-h-0 max-h-[38%] flex-[0_0_auto] border-b border-line-0">
+      <div className="flex items-center justify-between gap-[16px] p-[12px_20px] border-b border-line-0 bg-bg-1">
+        <div className="flex items-center gap-[14px]">
+          <div className="font-mono text-[11px] tracking-[0.22em] uppercase text-ink-2 flex items-center gap-[8px]">
+            <span className="w-[7px] h-[7px] rounded-full bg-pending data-[state=running]:bg-amber-theme data-[state=running]:shadow-[0_0_0_4px_var(--amber-glow)] data-[state=running]:animate-pulse-slow data-[state=done]:bg-done" data-state="done" />
             Research log
           </div>
         </div>
-        <div className="pane-header__right">
-          <span className="status-text">{LOG_ENTRIES.length} steps</span>
+        <div className="flex items-center gap-[18px] font-mono text-[10.5px] text-ink-3">
+          <span className="tracking-[0.18em] uppercase text-[10px] text-ink-3">{LOG_ENTRIES.length} steps</span>
+          {onClose && (
+            <button className="bg-none border-none text-[16px] leading-none text-ink-3 cursor-pointer px-[2px] py-0 opacity-60 transition-all duration-[120ms] hover:opacity-100 hover:text-ink-0" onClick={onClose} title="Hide log">×</button>
+          )}
         </div>
       </div>
-      <div className="thin-progress" data-state="done">
-        <span style={{ width: '100%' }} />
+      <div className="group h-[1px] w-full bg-line-0 relative overflow-hidden" data-state="done">
+        <span className="absolute inset-[0_auto_0_0] bg-amber-theme transition-[width] duration-[240ms] ease-out group-data-[state=running]:shadow-[0_0_8px_var(--amber-glow)]" style={{ width: '100%' }} />
       </div>
-      <div className="log">
+      <div className="overflow-y-auto pt-[8px] px-0 pb-[14px] font-mono text-[12px] [&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[4px]">
         {LOG_ENTRIES.map(({ entry, state, displayText }) => (
           <LogRow
             key={entry.id}
@@ -52,10 +35,10 @@ export default function ResearchLog() {
             quote={entry.quote ? displayText : undefined}
           />
         ))}
-        <div className="synergy">
-          <span className="synergy__icon">⌖</span>
+        <div className="flex items-start gap-[12px] p-[12px_14px] bg-[linear-gradient(90deg,color-mix(in_oklch,var(--amber)_10%,var(--bg-1)),var(--bg-1))] border border-[color-mix(in_oklch,var(--amber)_25%,var(--line-0))] rounded-md text-[12px] text-ink-1 mt-[6px] mx-[20px] mb-[8px]">
+          <span className="font-serif text-[20px] text-amber-theme leading-none pt-[2px]">⌖</span>
           <div>
-            <div className="synergy__label">Sponsor synergy detected</div>
+            <div className="font-mono text-[9.5px] tracking-[0.22em] uppercase text-amber-theme mb-[2px]">Sponsor synergy detected</div>
             <div>{SYNERGY_TEXT}</div>
           </div>
         </div>

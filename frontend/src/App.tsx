@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import './App.css'
 import Sidebar from './components/Sidebar'
-import ResearchLog from './components/ResearchLog'
+import EmptyState from './components/EmptyState'
+import ResearchScreen from './components/ResearchScreen'
 import IdeaCards from './components/IdeaCards'
+import LogSlideover from './components/LogSlideover'
 
 function toggleSet<T>(prev: Set<T>, val: T): Set<T> {
   const next = new Set(prev)
@@ -23,10 +24,21 @@ function App() {
   const [skills, setSkills] = useState(new Set(['frontend', 'backend', 'ML']))
   const [timeBudget, setTimeBudget] = useState('36h')
   const [depth, setDepth] = useState(1)
-  const [runState] = useState<'idle' | 'running' | 'done'>('done')
+  const [runState, setRunState] = useState<'idle' | 'running' | 'done'>('idle')
+  const [showLog, setShowLog] = useState(false)
+  const [customSponsorUrls, setCustomSponsorUrls] = useState<string[]>([])
+
+  const addCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => [...prev, url])
+  const removeCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => prev.filter(u => u !== url))
+
+  const handleRun = () => {
+    setRunState('running')
+    setShowLog(false)
+    setTimeout(() => setRunState('done'), 4000)
+  }
 
   return (
-    <div className="app">
+    <div className="grid grid-cols-[340px_1fr] max-[1100px]:grid-cols-[300px_1fr] h-screen gap-0">
       <Sidebar
         selectedSponsors={selectedSponsors}
         toggleSponsor={id => setSelectedSponsors(prev => toggleSet(prev, id))}
@@ -43,14 +55,17 @@ function App() {
         depth={depth}
         setDepth={setDepth}
         runState={runState}
-        onRun={() => {}}
+        onRun={handleRun}
+        customSponsorUrls={customSponsorUrls}
+        addCustomSponsorUrl={addCustomSponsorUrl}
+        removeCustomSponsorUrl={removeCustomSponsorUrl}
       />
-      <main className="right">
-        <ResearchLog />
-        <IdeaCards />
+      <main className="flex flex-col min-h-0 bg-bg-0">
+        {runState === 'idle' && <EmptyState />}
+        {runState === 'running' && <ResearchScreen />}
+        {runState === 'done' && <IdeaCards onViewLog={showLog ? undefined : () => setShowLog(true)} />}
       </main>
-
-
+      <LogSlideover open={showLog} onClose={() => setShowLog(false)} />
     </div>
   )
 }
