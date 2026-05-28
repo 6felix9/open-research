@@ -1,26 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
-import { LOG_ENTRIES, SYNERGY_TEXT } from '../data'
+import type { LogEntry } from '../data'
 import LogRow from './LogRow'
 
-export default function ResearchScreen() {
-  const [visibleCount, setVisibleCount] = useState(1)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+interface ResearchScreenProps {
+  logs: LogEntry[]
+  synergyText: string
+}
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setVisibleCount(prev => {
-        if (prev >= LOG_ENTRIES.length) {
-          clearInterval(intervalRef.current!)
-          return prev
-        }
-        return prev + 1
-      })
-    }, 480)
-    return () => clearInterval(intervalRef.current!)
-  }, [])
-
-  const progress = Math.min((visibleCount / LOG_ENTRIES.length) * 100, 100)
-  const isDone = visibleCount >= LOG_ENTRIES.length
+export default function ResearchScreen({ logs, synergyText }: ResearchScreenProps) {
+  const isDone = logs.length > 0 && logs[logs.length - 1].final === true
+  const progress = isDone ? 100 : Math.min((logs.length / 8) * 90, 90)
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -40,26 +28,26 @@ export default function ResearchScreen() {
 
       <div className="flex-1 overflow-y-auto py-[24px] px-0 pb-[40px] [&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[4px]">
         <div className="max-w-[780px] mx-auto px-[32px] py-0">
-          {LOG_ENTRIES.map(({ entry, displayText }, i) => {
-            const state = i < visibleCount - 1 ? 'done' : i === visibleCount - 1 ? 'running' : 'idle'
+          {logs.map((entry, i) => {
+            const state = isDone ? 'done' : i < logs.length - 1 ? 'done' : 'running'
             return (
               <LogRow
                 key={entry.id}
                 state={state}
                 step={entry.step.replace(/^\d+ · /, '')}
-                text={entry.quote ? undefined : displayText}
-                quote={entry.quote ? displayText : undefined}
-                animate={i === visibleCount - 1}
+                text={entry.quote ? undefined : entry.text}
+                quote={entry.quote}
+                animate={!isDone && i === logs.length - 1}
                 variant="screen"
               />
             )
           })}
-          {isDone && (
+          {isDone && synergyText && (
             <div className="flex items-start gap-[12px] p-[12px_14px] bg-[linear-gradient(90deg,color-mix(in_oklch,var(--amber)_10%,var(--bg-1)),var(--bg-1))] border border-[color-mix(in_oklch,var(--amber)_25%,var(--line-0))] rounded-md text-[12px] text-ink-1 mt-[8px] mr-[20px] mb-[8px] ml-[-16px]">
               <span className="font-serif text-[20px] text-amber-theme leading-none pt-[2px]">⌖</span>
               <div>
                 <div className="font-mono text-[9.5px] tracking-[0.22em] uppercase text-amber-theme mb-[2px]">Sponsor synergy detected</div>
-                <div>{SYNERGY_TEXT}</div>
+                <div>{synergyText}</div>
               </div>
             </div>
           )}

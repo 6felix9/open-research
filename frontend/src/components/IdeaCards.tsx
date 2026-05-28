@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IDEAS, SPONSORS, type Idea } from '../data'
+import { SPONSORS, type Idea } from '../data'
 
 function getSponsor(id: string) {
   return SPONSORS.find(s => s.id === id)!
@@ -104,9 +104,7 @@ function IdeaCard({ idea, isExpanded, onExpand }: IdeaCardProps) {
 type FilterType = 'all' | 'highMatch' | 'easy' | 'pinned'
 type SortType = 'match' | 'diff' | 'order'
 
-const ORDER = [...IDEAS]
-
-export default function IdeaCards({ onViewLog }: { onViewLog?: () => void }) {
+export default function IdeaCards({ onViewLog, ideas }: { onViewLog?: () => void; ideas: Idea[] }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [filter, setFilter] = useState<FilterType>('all')
   const [sort, setSort] = useState<SortType>('match')
@@ -120,7 +118,7 @@ export default function IdeaCards({ onViewLog }: { onViewLog?: () => void }) {
     })
   }
 
-  let shown = [...ORDER]
+  let shown = [...ideas]
   if (filter === 'highMatch') shown = shown.filter(i => i.match >= 80)
   if (filter === 'easy') shown = shown.filter(i => i.difficulty <= 2)
   if (filter === 'pinned') shown = []
@@ -128,9 +126,9 @@ export default function IdeaCards({ onViewLog }: { onViewLog?: () => void }) {
   if (sort === 'diff') shown.sort((a, b) => a.difficulty - b.difficulty)
 
   const filters: Array<{ id: FilterType; label: string; count: number }> = [
-    { id: 'all',       label: 'All',       count: IDEAS.length },
-    { id: 'highMatch', label: '≥80 Match', count: IDEAS.filter(i => i.match >= 80).length },
-    { id: 'easy',      label: 'Easy Build', count: IDEAS.filter(i => i.difficulty <= 2).length },
+    { id: 'all',       label: 'All',       count: ideas.length },
+    { id: 'highMatch', label: '≥80 Match', count: ideas.filter(i => i.match >= 80).length },
+    { id: 'easy',      label: 'Easy Build', count: ideas.filter(i => i.difficulty <= 2).length },
     { id: 'pinned',    label: 'Pinned',    count: 0 },
   ]
 

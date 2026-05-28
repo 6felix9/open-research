@@ -4,6 +4,7 @@ import EmptyState from './components/EmptyState'
 import ResearchScreen from './components/ResearchScreen'
 import IdeaCards from './components/IdeaCards'
 import LogSlideover from './components/LogSlideover'
+import type { LogEntry, Idea } from './data'
 
 function toggleSet<T>(prev: Set<T>, val: T): Set<T> {
   const next = new Set(prev)
@@ -28,13 +29,53 @@ function App() {
   const [showLog, setShowLog] = useState(false)
   const [customSponsorUrls, setCustomSponsorUrls] = useState<string[]>([])
 
+  const [logs, setLogs] = useState<LogEntry[]>([])
+  const [synergyText, setSynergyText] = useState('')
+  const [ideas, setIdeas] = useState<Idea[]>([])
+
   const addCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => [...prev, url])
   const removeCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => prev.filter(u => u !== url))
 
   const handleRun = () => {
+    setLogs([])
+    setSynergyText('')
+    setIdeas([])
     setRunState('running')
     setShowLog(false)
-    setTimeout(() => setRunState('done'), 4000)
+
+    const params = new URLSearchParams({
+      sponsors: [...selectedSponsors].join(','),
+      interests: [...selectedInterests].join(','),
+      theme,
+      seed,
+      skills: [...skills].join(','),
+      time_budget: timeBudget,
+      depth: String(depth),
+    })
+
+    const es = new EventSource(`/api/research/stream?${params}`)
+
+    es.addEventListener('log', e => {
+      setLogs(prev => [...prev, JSON.parse(e.data)])
+    })
+
+    es.addEventListener('synergy', e => {
+      setSynergyText(JSON.parse(e.data).text)
+    })
+
+    es.addEventListener('ideas', e => {
+      setIdeas(JSON.parse(e.data))
+    })
+
+    es.addEventListener('done', () => {
+      es.close()
+      setRunState('done')
+    })
+
+    es.onerror = () => {
+      es.close()
+      setRunState('idle')
+    }
   }
 
   return (
@@ -62,10 +103,10 @@ function App() {
       />
       <main className="flex flex-col min-h-0 bg-bg-0">
         {runState === 'idle' && <EmptyState />}
-        {runState === 'running' && <ResearchScreen />}
-        {runState === 'done' && <IdeaCards onViewLog={showLog ? undefined : () => setShowLog(true)} />}
+        {runState === 'running' && <ResearchScreen logs={logs} synergyText={synergyText} />}
+        {runState === 'done' && <IdeaCards ideas={ideas} onViewLog={showLog ? undefined : () => setShowLog(true)} />}
       </main>
-      <LogSlideover open={showLog} onClose={() => setShowLog(false)} />
+      <LogSlideover open={showLog} onClose={() => setShowLog(false)} logs={logs} synergyText={synergyText} />
     </div>
   )
 }
