@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from agents import Agent, Runner
 
+from ..core.fallback import fallback_sponsor_profile, has_api_key
 from ..core.search import search_web_tool
 
 
@@ -32,6 +33,8 @@ sponsor_profiler_agent = Agent(
 
 
 async def profile_sponsor_task(sponsor: str) -> str:
+    if not has_api_key():
+        return fallback_sponsor_profile(sponsor)
     prompt = (
         f"Build a sponsor profile for {sponsor!r}. "
         "Search for official docs, recent hackathon prize pages, examples, and developer-facing use cases."

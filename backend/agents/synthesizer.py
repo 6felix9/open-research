@@ -5,6 +5,8 @@ from typing import Literal
 from agents import Agent, Runner
 from pydantic import BaseModel
 
+from ..core.fallback import fallback_synthesis, has_api_key
+
 
 class Breakdown(BaseModel):
     sponsor: int
@@ -74,6 +76,8 @@ async def synthesize_task(
     sponsor_profiles: dict[str, str],
     prior_art_summaries: dict[str, str],
 ) -> SynthesisResult:
+    if not has_api_key():
+        return fallback_synthesis(sponsors, interests, theme, seed, skills, time_budget)  # type: ignore[return-value]
     profiles_block = "\n\n".join(
         f"### {name}\n{text[:600]}" for name, text in sponsor_profiles.items()
     ) or "No sponsor profiles available."

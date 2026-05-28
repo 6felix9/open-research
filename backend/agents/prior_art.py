@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from agents import Agent, Runner
 
+from ..core.fallback import fallback_prior_art_summary, has_api_key
 from ..core.mock_search import mock_search_prior_art_tool
 
 
@@ -30,6 +31,8 @@ prior_art_agent = Agent(
 
 
 async def research_prior_art_task(sponsor_name: str, sponsor_profile: str) -> str:
+    if not has_api_key():
+        return fallback_prior_art_summary(sponsor_name)
     prompt = (
         f"Sponsor: {sponsor_name}\n\n"
         f"Sponsor profile summary:\n{sponsor_profile[:800]}\n\n"
