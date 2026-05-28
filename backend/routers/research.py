@@ -1,6 +1,8 @@
 import asyncio
 from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
+from ..agents.sponsor_profiler import profile_sponsor_task
+from ..core.cache import cache_profile, get_cached_profile
 from ..core.stream import sse
 
 router = APIRouter()
@@ -126,10 +128,144 @@ _IDEAS = [
 ]
 
 
+def _parse_csv(value: str) -> list[str]:
+    seen = set()
+    items = []
+    for raw_item in value.split(","):
+        item = raw_item.strip()
+        key = item.lower()
+        if item and key not in seen:
+            seen.add(key)
+            items.append(item)
+    return items
+
+
 async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills: str, time_budget: str, depth: int):
-    for entry in _LOGS:
-        yield sse("log", entry)
-        await asyncio.sleep(0.65)
+    sponsor_names = _parse_csv(sponsors)
+    sponsor_profiles = {}
+
+    yield sse(
+        "log",
+        {
+            "id": "parse",
+            "step": "01 · INTAKE",
+            "text": "Parsing brief with locked interest tags and sponsors.",
+        },
+    )
+
+    if sponsor_names:
+        yield sse(
+            "log",
+            {
+                "id": "sponsor-landscape",
+                "step": "02 · SPONSOR LANDSCAPE",
+                "text": f"Checking sponsor profile cache for {len(sponsor_names)} sponsor(s).",
+            },
+        )
+    else:
+        yield sse(
+            "log",
+            {
+                "id": "sponsor-landscape",
+                "step": "02 · SPONSOR LANDSCAPE",
+                "text": "No sponsors selected. Skipping Phase 1 sponsor profiling.",
+            },
+        )
+
+    profile_tasks = {}
+    for sponsor_name in sponsor_names:
+        try:
+            cached_profile = get_cached_profile(sponsor_name)
+        except Exception as exc:
+            cached_profile = None
+            yield sse(
+                "log",
+                {
+                    "id": f"{sponsor_name.lower()}-cache-error",
+                    "step": "02 · SPONSOR LANDSCAPE",
+                    "text": f"{sponsor_name}: cache unavailable ({exc}). Profiling dynamically.",
+                },
+            )
+
+        if cached_profile:
+            sponsor_profiles[sponsor_name] = cached_profile
+            yield sse(
+                "log",
+                {
+                    "id": f"{sponsor_name.lower()}-cache-hit",
+                    "step": "02 · SPONSOR LANDSCAPE",
+                    "text": f"{sponsor_name}: cache hit. Reusing stored sponsor profile.",
+                },
+            )
+        else:
+            yield sse(
+                "log",
+                {
+                    "id": f"{sponsor_name.lower()}-profile-start",
+                    "step": "02 · SPONSOR LANDSCAPE",
+                    "text": f"{sponsor_name}: cache miss. Launching sponsor profiler agent.",
+                },
+            )
+            task = asyncio.create_task(profile_sponsor_task(sponsor_name))
+            profile_tasks[task] = sponsor_name
+
+    while profile_tasks:
+        done, _ = await asyncio.wait(profile_tasks.keys(), return_when=asyncio.FIRST_COMPLETED)
+        for task in done:
+            sponsor_name = profile_tasks.pop(task)
+            try:
+                profile = task.result()
+            except Exception as exc:
+                yield sse(
+                    "log",
+                    {
+                        "id": f"{sponsor_name.lower()}-profile-error",
+                        "step": "02 · SPONSOR LANDSCAPE",
+                        "text": f"{sponsor_name}: sponsor profiler failed ({exc}).",
+                    },
+                )
+                continue
+
+            sponsor_profiles[sponsor_name] = profile
+            yield sse(
+                "log",
+                {
+                    "id": f"{sponsor_name.lower()}-profile-complete",
+                    "step": "02 · SPONSOR LANDSCAPE",
+                    "text": f"{sponsor_name}: sponsor profile generated.",
+                },
+            )
+
+            try:
+                cache_profile(sponsor_name, profile)
+            except Exception as exc:
+                yield sse(
+                    "log",
+                    {
+                        "id": f"{sponsor_name.lower()}-cache-write-error",
+                        "step": "02 · SPONSOR LANDSCAPE",
+                        "text": f"{sponsor_name}: profile generated but cache write failed ({exc}).",
+                    },
+                )
+            else:
+                yield sse(
+                    "log",
+                    {
+                        "id": f"{sponsor_name.lower()}-cache-write",
+                        "step": "02 · SPONSOR LANDSCAPE",
+                        "text": f"{sponsor_name}: profile saved to cache.",
+                    },
+                )
+
+    yield sse(
+        "log",
+        {
+            "id": "phase-1-complete",
+            "step": "03 · PHASE 1 COMPLETE",
+            "text": f"{len(sponsor_profiles)} sponsor profile(s) ready. Downstream idea generation is still using the Phase 1 mock payload.",
+            "final": True,
+        },
+    )
 
     yield sse("synergy", {"text": _SYNERGY})
     await asyncio.sleep(0.3)
