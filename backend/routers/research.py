@@ -248,6 +248,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
     yield sse("done", {})
 
 
+# TODO: Accept custom_sponsor_urls: str = "" parameter.
 @router.get("/research/stream")
 async def stream_research(
     sponsors: str = "",
@@ -258,6 +259,7 @@ async def stream_research(
     time_budget: str = "",
     depth: int = 1,
 ):
+    # TODO: Pass custom_sponsor_urls to _generate, and utilize depth to control research effort.
     return EventSourceResponse(
         _generate(sponsors, interests, theme, seed, skills, time_budget, depth)
     )

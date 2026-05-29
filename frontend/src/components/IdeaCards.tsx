@@ -121,6 +121,8 @@ export default function IdeaCards({ onViewLog, ideas }: { onViewLog?: () => void
   let shown = [...ideas]
   if (filter === 'highMatch') shown = shown.filter(i => i.match >= 80)
   if (filter === 'easy') shown = shown.filter(i => i.difficulty <= 2)
+  // TODO: Add pinned state/functionality to allow toggling ideas as pinned.
+  // TODO: When filter === 'pinned', render the <Compare /> matrix component instead of an empty list.
   if (filter === 'pinned') shown = []
   if (sort === 'match') shown.sort((a, b) => b.match - a.match)
   if (sort === 'diff') shown.sort((a, b) => a.difficulty - b.difficulty)

@@ -51,6 +51,7 @@ function App() {
       skills: [...skills].join(','),
       time_budget: timeBudget,
       depth: String(depth),
+      // TODO: Forward customSponsorUrls to the EventSource parameters.
     })
 
     const es = new EventSource(`/api/research/stream?${params}`)

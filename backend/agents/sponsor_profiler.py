@@ -38,6 +38,7 @@ sponsor_profiler_agent = Agent(
 
 
 async def profile_sponsor_task(sponsor: str) -> str:
+    # TODO: Support custom_sponsor_urls parameter to scrape/read custom documentation contents directly using web readers.
     if not has_api_key():
         log.info("sponsor_profiler [%s]: no API key — using fallback profile", sponsor)
         return fallback_sponsor_profile(sponsor)

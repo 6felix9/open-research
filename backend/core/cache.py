@@ -58,6 +58,7 @@ def _is_stale(cached_at: str | None) -> bool:
 
 
 def get_cached_profile(sponsor_name: str) -> str | None:
+    # TODO: Provide a force-refresh trigger or an endpoint to invalidate specific sponsor caches on-demand.
     sponsor_id = _normalize_sponsor_name(sponsor_name)
     if not sponsor_id:
         return None
