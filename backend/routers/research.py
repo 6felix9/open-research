@@ -1,3 +1,19 @@
+"""
+research.py — sole public API endpoint for the Open Research pipeline.
+
+GET /api/research/stream returns a Server-Sent Events stream driven by the
+_generate() async generator below. All three pipeline phases run inside that
+generator; the client receives live log events as each step completes, then
+a final `ideas` event with the ranked results.
+
+Phase flow (sequential, phases 1 & 2 parallel per-sponsor internally):
+  01 · INTAKE            — parse and validate input
+  02 · SPONSOR LANDSCAPE — profile each sponsor (Phase 1)
+  04 · PRIOR ART SCAN    — scan Devpost/X per sponsor (Phase 2)
+  05 · SYNTHESIS         — generate ranked idea briefs (Phase 3)
+  06 · COMPLETE          — emit ideas + done
+"""
+
 import asyncio
 import logging
 
@@ -15,13 +31,25 @@ router = APIRouter()
 
 
 def _url_matches_sponsor(url: str, sponsor_name: str) -> bool:
-    """Return True if url's hostname suggests it belongs to sponsor_name."""
+    """Return True if url's hostname suggests it belongs to sponsor_name.
+
+    Strips common subdomains (www, docs, api, …) then checks whether the
+    remaining root token appears inside the normalized sponsor name or vice
+    versa.  Used to decide whether a user-supplied custom URL is likely
+    documentation for the current sponsor, so we can serve a cached profile
+    instead of re-scraping.
+
+    Examples:
+        "https://docs.supabase.com/..."  + "Supabase"  → True
+        "https://platform.openai.com/"  + "Groq"       → False
+    """
     from urllib.parse import urlparse
     try:
         hostname = urlparse(url).hostname or ""
     except Exception:
         return False
     parts = hostname.split(".")
+    # Strip common subdomains so "docs.supabase.com" → ["supabase", "com"]
     skip = {"www", "docs", "api", "developers", "dev", "help", "support"}
     while parts and parts[0] in skip:
         parts = parts[1:]
@@ -31,6 +59,11 @@ def _url_matches_sponsor(url: str, sponsor_name: str) -> bool:
 
 
 def _parse_csv(value: str) -> list[str]:
+    """Split a comma-separated string into a deduplicated list, preserving order.
+
+    Deduplication is case-insensitive but the original casing is kept.
+    Empty tokens (e.g. from a trailing comma) are dropped.
+    """
     seen = set()
     items = []
     for raw_item in value.split(","):
@@ -43,6 +76,33 @@ def _parse_csv(value: str) -> list[str]:
 
 
 async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills: str, time_budget: str, depth: int, custom_sponsor_urls: str = ""):
+    """Async generator that drives the full three-phase research pipeline.
+
+    Yields SSE-formatted dicts (via `sse()`) as each step completes so the
+    client receives live progress without waiting for the full run.
+
+    Phase 1 — Sponsor Profiling
+        All sponsor profile tasks are launched concurrently with
+        asyncio.create_task before any are awaited.  Results are collected
+        with asyncio.wait(FIRST_COMPLETED) so a log event fires as soon as
+        each individual profile is ready rather than waiting for the slowest.
+
+        Cache logic (per sponsor):
+          - No custom URLs → check ChromaDB; hit = skip agent task entirely.
+          - Custom URLs provided + hostname matches sponsor → check ChromaDB;
+            hit = skip scraping, use cached profile.
+          - Custom URLs provided but no match, or cache miss → spawn
+            profile_sponsor_task(sponsor, custom_url_list).
+        All generated profiles (custom or not) are written back to ChromaDB.
+
+    Phase 2 — Prior Art Scan
+        Same concurrency pattern as Phase 1.  Skipped entirely if Phase 1
+        produced no profiles.
+
+    Phase 3 — Synthesis
+        Single sequential call.  Skipped if synthesis raises; emits error log
+        + done in that case so the client can clean up.
+    """
     sponsor_names = _parse_csv(sponsors)
     log.info(
         "research: request — sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, depth=%d",
@@ -51,6 +111,9 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
     )
     sponsor_profiles = {}
 
+    # ------------------------------------------------------------------ #
+    # 01 · INTAKE                                                          #
+    # ------------------------------------------------------------------ #
     yield sse(
         "log",
         {
@@ -79,10 +142,18 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
             },
         )
 
+    # ------------------------------------------------------------------ #
+    # 02 · SPONSOR LANDSCAPE  (Phase 1)                                   #
+    # Launch all profile tasks before awaiting any of them so they run    #
+    # concurrently.  profile_tasks maps Task → sponsor_name for lookup    #
+    # when results come in.                                                #
+    # ------------------------------------------------------------------ #
     custom_url_list = _parse_csv(custom_sponsor_urls)
     profile_tasks = {}
     for sponsor_name in sponsor_names:
         if custom_url_list:
+            # If any custom URL looks like it belongs to this sponsor, try
+            # the cache before committing to a Firecrawl scrape.
             matching_urls = [u for u in custom_url_list if _url_matches_sponsor(u, sponsor_name)]
             if matching_urls:
                 try:
@@ -100,6 +171,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                         },
                     )
                     continue
+            # No matching cache entry — scrape the custom URLs directly.
             yield sse(
                 "log",
                 {
@@ -112,6 +184,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
             profile_tasks[task] = sponsor_name
             continue
 
+        # Standard path: check ChromaDB, skip the agent task on a fresh hit.
         try:
             cached_profile = get_cached_profile(sponsor_name)
         except Exception as exc:
@@ -147,6 +220,8 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
             task = asyncio.create_task(profile_sponsor_task(sponsor_name))
             profile_tasks[task] = sponsor_name
 
+    # Drain completed tasks one at a time so we can emit log events as each
+    # profile finishes rather than waiting for the full batch.
     while profile_tasks:
         done, _ = await asyncio.wait(profile_tasks.keys(), return_when=asyncio.FIRST_COMPLETED)
         for task in done:
@@ -174,6 +249,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                 },
             )
 
+            # Write back to cache regardless of whether custom URLs were used.
             try:
                 cache_profile(sponsor_name, profile)
             except Exception as exc:
@@ -195,7 +271,10 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                     },
                 )
 
-    # Phase 2: Prior Art Scan
+    # ------------------------------------------------------------------ #
+    # 04 · PRIOR ART SCAN  (Phase 2)                                      #
+    # Same concurrency pattern as Phase 1.  Skipped if no profiles.       #
+    # ------------------------------------------------------------------ #
     prior_art_summaries: dict[str, str] = {}
     if sponsor_profiles:
         yield sse(
@@ -239,7 +318,10 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                     },
                 )
 
-    # Phase 3: Synthesis
+    # ------------------------------------------------------------------ #
+    # 05 · SYNTHESIS  (Phase 3)                                           #
+    # Single sequential call — no parallelism needed here.                #
+    # ------------------------------------------------------------------ #
     yield sse(
         "log",
         {
@@ -306,6 +388,11 @@ async def stream_research(
     depth: int = 1,
     custom_sponsor_urls: str = "",
 ):
+    """Stream the research pipeline as Server-Sent Events.
+
+    Validates required params, then hands off to _generate() which yields
+    SSE dicts consumed by EventSourceResponse.
+    """
     if not _parse_csv(sponsors):
         raise HTTPException(status_code=422, detail="sponsors is required")
     if not theme.strip():
