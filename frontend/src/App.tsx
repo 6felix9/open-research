@@ -14,15 +14,11 @@ function toggleSet<T>(prev: Set<T>, val: T): Set<T> {
 }
 
 function App() {
-  const [selectedSponsors, setSelectedSponsors] = useState(
-    new Set(['groq', 'anthropic', 'elevenlabs', 'supabase'])
-  )
-  const [selectedInterests, setSelectedInterests] = useState(
-    new Set(['agents', 'voice', 'tool-use', 'developer-tools', 'RAG'])
-  )
-  const [theme, setTheme] = useState("tools that make creative work feel less lonely")
+  const [selectedSponsors, setSelectedSponsors] = useState(new Set<string>())
+  const [selectedInterests, setSelectedInterests] = useState(new Set<string>())
+  const [theme, setTheme] = useState("")
   const [seed, setSeed] = useState("")
-  const [skills, setSkills] = useState(new Set(['frontend', 'backend', 'ML']))
+  const [skills, setSkills] = useState(new Set<string>())
   const [timeBudget, setTimeBudget] = useState('36h')
   const [depth, setDepth] = useState(1)
   const [runState, setRunState] = useState<'idle' | 'running' | 'done'>('idle')

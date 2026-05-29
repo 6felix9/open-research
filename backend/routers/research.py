@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
 
 log = logging.getLogger(__name__)
@@ -259,6 +259,10 @@ async def stream_research(
     time_budget: str = "",
     depth: int = 1,
 ):
+    if not _parse_csv(sponsors):
+        raise HTTPException(status_code=422, detail="sponsors is required")
+    if not theme.strip():
+        raise HTTPException(status_code=422, detail="theme is required")
     # TODO: Pass custom_sponsor_urls to _generate, and utilize depth to control research effort.
     return EventSourceResponse(
         _generate(sponsors, interests, theme, seed, skills, time_budget, depth)

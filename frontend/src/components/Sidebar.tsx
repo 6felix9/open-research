@@ -59,7 +59,7 @@ export default function Sidebar({
       <div className="overflow-y-auto pt-[18px] px-[20px] pb-[12px] flex flex-col gap-[22px] min-h-0 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[3px]">
         <div className="flex flex-col gap-[10px]">
           <div className="flex items-baseline justify-between gap-[8px]">
-            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Sponsors</div>
+            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Sponsors <span className="text-amber-theme normal-case tracking-normal">*</span></div>
             <div className="font-mono text-[10px] text-ink-4 tracking-[0.05em]">{selectedSponsors.size}/{SPONSORS.length}</div>
           </div>
           <div className="flex flex-wrap gap-[6px]">
@@ -102,26 +102,7 @@ export default function Sidebar({
         </div>
 
         <div className="flex flex-col gap-[10px]">
-          <div className="flex items-baseline justify-between gap-[8px]">
-            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Tech interests</div>
-            <div className="font-mono text-[10px] text-ink-4 tracking-[0.05em]">{selectedInterests.size} on</div>
-          </div>
-          <div className="flex flex-wrap gap-[5px]">
-            {INTERESTS.map(tag => (
-              <button
-                key={tag}
-                className="font-mono text-[11px] py-[4px] px-[8px] rounded-[4px] border border-line-0 bg-transparent text-ink-2 cursor-pointer transition-all duration-[120ms] ease-out select-none hover:text-ink-0 hover:border-line-1 aria-pressed:bg-ink-0 aria-pressed:text-bg-0 aria-pressed:border-ink-0"
-                aria-pressed={selectedInterests.has(tag)}
-                onClick={() => toggleInterest(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-[10px]">
-          <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Theme</div>
+          <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Theme <span className="text-amber-theme normal-case tracking-normal">*</span></div>
           <div className="flex flex-col gap-[6px]">
             <textarea
               className="bg-bg-0 border border-line-0 rounded-md text-ink-0 font-sans text-[13px] py-[9px] px-[11px] outline-none resize-none transition-all duration-[120ms] ease-out placeholder-ink-4 focus:border-amber-dim focus:shadow-[0_0_0_3px_var(--amber-glow)]"
@@ -136,6 +117,25 @@ export default function Sidebar({
         <details className="group border-t border-dashed border-line-0 pt-[14px] mt-[4px]">
           <summary className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 cursor-pointer list-none flex items-center justify-between select-none [&::-webkit-details-marker]:hidden after:content-['›'] after:text-[14px] after:transition-transform after:duration-[200ms] group-open:after:rotate-90">Advanced</summary>
           <div className="flex flex-col gap-[22px] pt-[16px]">
+            <div className="flex flex-col gap-[10px]">
+              <div className="flex items-baseline justify-between gap-[8px]">
+                <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Tech interests</div>
+                <div className="font-mono text-[10px] text-ink-4 tracking-[0.05em]">{selectedInterests.size} on</div>
+              </div>
+              <div className="flex flex-wrap gap-[5px]">
+                {INTERESTS.map(tag => (
+                  <button
+                    key={tag}
+                    className="font-mono text-[11px] py-[4px] px-[8px] rounded-[4px] border border-line-0 bg-transparent text-ink-2 cursor-pointer transition-all duration-[120ms] ease-out select-none hover:text-ink-0 hover:border-line-1 aria-pressed:bg-ink-0 aria-pressed:text-bg-0 aria-pressed:border-ink-0"
+                    aria-pressed={selectedInterests.has(tag)}
+                    onClick={() => toggleInterest(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="flex flex-col gap-[10px]">
               <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Seed idea (optional)</div>
               <div className="flex flex-col gap-[6px]">
@@ -205,16 +205,21 @@ export default function Sidebar({
 
       <div className="border-t border-dashed border-line-0 pt-[14px] px-[20px] pb-[18px] bg-bg-1 flex flex-col gap-[10px]">
         <button
-          className="flex items-center justify-between gap-[8px] py-[12px] px-[16px] rounded-md border border-amber-dim bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_20%,var(--bg-2)),var(--bg-2))] text-ink-0 font-sans text-[13px] font-medium cursor-pointer transition-all duration-[140ms] ease-out text-left tracking-[0.01em] w-full hover:bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_30%,var(--bg-2)),color-mix(in_oklch,var(--amber)_10%,var(--bg-2)))] hover:shadow-[0_0_0_3px_var(--amber-glow)] active:translate-y-[1px] data-[state=running]:border-amber-theme data-[state=running]:bg-bg-2 data-[state=running]:text-ink-0 data-[state=running]:cursor-progress"
+          className="flex items-center justify-between gap-[8px] py-[12px] px-[16px] rounded-md border border-amber-dim bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_20%,var(--bg-2)),var(--bg-2))] text-ink-0 font-sans text-[13px] font-medium cursor-pointer transition-all duration-[140ms] ease-out text-left tracking-[0.01em] w-full hover:enabled:bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_30%,var(--bg-2)),color-mix(in_oklch,var(--amber)_10%,var(--bg-2)))] hover:enabled:shadow-[0_0_0_3px_var(--amber-glow)] active:enabled:translate-y-[1px] data-[state=running]:border-amber-theme data-[state=running]:bg-bg-2 data-[state=running]:text-ink-0 data-[state=running]:cursor-progress disabled:opacity-40 disabled:cursor-not-allowed"
           data-state={runState}
           onClick={onRun}
-          disabled={runState === 'running'}
+          disabled={runState === 'running' || selectedSponsors.size === 0 || !theme.trim()}
         >
           <span>
             {runState === 'running' ? 'Researching…' : runState === 'done' ? 'Run again' : 'Research ideas'}
           </span>
           <span className="font-mono text-[13px] text-amber-theme">→</span>
         </button>
+        {runState !== 'running' && (selectedSponsors.size === 0 || !theme.trim()) && (
+          <p className="font-mono text-[10px] text-ink-4 text-center">
+            {selectedSponsors.size === 0 ? 'Select at least one sponsor' : 'Add a theme'} to continue
+          </p>
+        )}
       </div>
     </aside>
   )
