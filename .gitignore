@@ -1,6 +1,7 @@
 # Claude Code
 .agents/
 .claude/
+.antigravitycli/
 skills-lock.json
 CLAUDE.md
 AGENTS.md
@@ -54,6 +55,9 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# ChromaDB
+backend/chroma_db/
 
 # Docker
 *.env.docker
