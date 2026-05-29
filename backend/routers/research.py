@@ -8,10 +8,26 @@ log = logging.getLogger(__name__)
 from ..agents.sponsor_profiler import profile_sponsor_task
 from ..agents.prior_art import research_prior_art_task
 from ..agents.synthesizer import synthesize_task
-from ..core.cache import cache_profile, get_cached_profile
+from ..core.cache import cache_profile, get_cached_profile, normalize_sponsor_name
 from ..core.stream import sse
 
 router = APIRouter()
+
+
+def _url_matches_sponsor(url: str, sponsor_name: str) -> bool:
+    """Return True if url's hostname suggests it belongs to sponsor_name."""
+    from urllib.parse import urlparse
+    try:
+        hostname = urlparse(url).hostname or ""
+    except Exception:
+        return False
+    parts = hostname.split(".")
+    skip = {"www", "docs", "api", "developers", "dev", "help", "support"}
+    while parts and parts[0] in skip:
+        parts = parts[1:]
+    root = normalize_sponsor_name(parts[0]) if parts else ""
+    norm_sponsor = normalize_sponsor_name(sponsor_name)
+    return bool(root) and (root in norm_sponsor or norm_sponsor in root)
 
 
 def _parse_csv(value: str) -> list[str]:
@@ -26,7 +42,7 @@ def _parse_csv(value: str) -> list[str]:
     return items
 
 
-async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills: str, time_budget: str, depth: int):
+async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills: str, time_budget: str, depth: int, custom_sponsor_urls: str = ""):
     sponsor_names = _parse_csv(sponsors)
     log.info(
         "research: request — sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, depth=%d",
@@ -63,8 +79,39 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
             },
         )
 
+    custom_url_list = _parse_csv(custom_sponsor_urls)
     profile_tasks = {}
     for sponsor_name in sponsor_names:
+        if custom_url_list:
+            matching_urls = [u for u in custom_url_list if _url_matches_sponsor(u, sponsor_name)]
+            if matching_urls:
+                try:
+                    cached_profile = get_cached_profile(sponsor_name)
+                except Exception:
+                    cached_profile = None
+                if cached_profile:
+                    sponsor_profiles[sponsor_name] = cached_profile
+                    yield sse(
+                        "log",
+                        {
+                            "id": f"{sponsor_name.lower()}-cache-hit",
+                            "step": "02 · SPONSOR LANDSCAPE",
+                            "text": f"{sponsor_name}: custom URL matches cached sponsor — using fresh cache.",
+                        },
+                    )
+                    continue
+            yield sse(
+                "log",
+                {
+                    "id": f"{sponsor_name.lower()}-profile-start",
+                    "step": "02 · SPONSOR LANDSCAPE",
+                    "text": f"{sponsor_name}: custom docs provided — scraping {len(custom_url_list)} URL(s).",
+                },
+            )
+            task = asyncio.create_task(profile_sponsor_task(sponsor_name, custom_url_list))
+            profile_tasks[task] = sponsor_name
+            continue
+
         try:
             cached_profile = get_cached_profile(sponsor_name)
         except Exception as exc:
@@ -248,7 +295,6 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
     yield sse("done", {})
 
 
-# TODO: Accept custom_sponsor_urls: str = "" parameter.
 @router.get("/research/stream")
 async def stream_research(
     sponsors: str = "",
@@ -258,12 +304,12 @@ async def stream_research(
     skills: str = "",
     time_budget: str = "",
     depth: int = 1,
+    custom_sponsor_urls: str = "",
 ):
     if not _parse_csv(sponsors):
         raise HTTPException(status_code=422, detail="sponsors is required")
     if not theme.strip():
         raise HTTPException(status_code=422, detail="theme is required")
-    # TODO: Pass custom_sponsor_urls to _generate, and utilize depth to control research effort.
     return EventSourceResponse(
-        _generate(sponsors, interests, theme, seed, skills, time_budget, depth)
+        _generate(sponsors, interests, theme, seed, skills, time_budget, depth, custom_sponsor_urls)
     )

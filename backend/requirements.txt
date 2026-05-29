@@ -9,3 +9,4 @@ sse-starlette>=2.1.0
 pydantic>=2.7.0
 duckduckgo-search>=6.1.7
 ddgs>=9.14.4
+firecrawl-py>=1.0.0

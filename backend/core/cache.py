@@ -21,6 +21,9 @@ def _normalize_sponsor_name(sponsor_name: str) -> str:
     return normalized.strip("-")
 
 
+normalize_sponsor_name = _normalize_sponsor_name
+
+
 def _get_client():
     global _client
     if _client is not None:

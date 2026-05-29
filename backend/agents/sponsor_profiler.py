@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 
 from agents import Agent, Runner
 
 from ..core.fallback import fallback_sponsor_profile, has_api_key
-from ..core.search import search_web_tool
+from ..core.fetch_urls import fetch_url_contents
+from ..core.search import search_web_tool, search_web_urls
 
 log = logging.getLogger(__name__)
 
@@ -37,16 +39,39 @@ sponsor_profiler_agent = Agent(
 )
 
 
-async def profile_sponsor_task(sponsor: str) -> str:
-    # TODO: Support custom_sponsor_urls parameter to scrape/read custom documentation contents directly using web readers.
+async def profile_sponsor_task(sponsor: str, custom_urls: list[str] | None = None) -> str:
     if not has_api_key():
         log.info("sponsor_profiler [%s]: no API key — using fallback profile", sponsor)
         return fallback_sponsor_profile(sponsor)
+
+    if custom_urls:
+        log.info("sponsor_profiler [%s]: fetching %d custom URL(s)", sponsor, len(custom_urls))
+        docs_content = await fetch_url_contents(custom_urls)
+        prompt = (
+            f"Custom documentation provided by the user:\n\n{docs_content}\n\n"
+            f"Build a sponsor profile for {sponsor!r} using the documentation above. "
+            "Also include past hackathon tracks, prize language, judging criteria, and source links where available."
+        )
+    else:
+        urls = await asyncio.to_thread(
+            search_web_urls, f"{sponsor} developer documentation official docs"
+        )
+        docs_content = await fetch_url_contents(urls) if urls else ""
+        if docs_content:
+            log.info("sponsor_profiler [%s]: pre-fetched %d URL(s) via DDG+Firecrawl", sponsor, len(urls))
+            prompt = (
+                f"Documentation fetched from the web:\n\n{docs_content}\n\n"
+                f"Build a sponsor profile for {sponsor!r} using the documentation above. "
+                "Also include past hackathon tracks, prize language, judging criteria, and source links where available."
+            )
+        else:
+            log.info("sponsor_profiler [%s]: pre-fetch yielded nothing — agent will search directly", sponsor)
+            prompt = (
+                f"Build a sponsor profile for {sponsor!r}. "
+                "Search for official docs, recent hackathon prize pages, examples, and developer-facing use cases."
+            )
+
     log.info("sponsor_profiler [%s]: starting agent", sponsor)
-    prompt = (
-        f"Build a sponsor profile for {sponsor!r}. "
-        "Search for official docs, recent hackathon prize pages, examples, and developer-facing use cases."
-    )
     t0 = time.perf_counter()
     result = await Runner.run(sponsor_profiler_agent, prompt)
     profile = str(result.final_output)

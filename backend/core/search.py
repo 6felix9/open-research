@@ -47,4 +47,20 @@ def search_web(query: str, max_results: int = 5) -> str:
     return "\n\n".join(formatted_results)
 
 
+def search_web_urls(query: str, max_results: int = 3) -> list[str]:
+    """Return URLs from a DuckDuckGo search without formatting."""
+    log.info("search_web_urls: %r (max_results=%d)", query, max_results)
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            with DDGS() as ddgs:
+                results = list(ddgs.text(query, backend="html", max_results=max_results))
+    except Exception as exc:
+        log.warning("search_web_urls: failed for %r: %s", query, exc)
+        return []
+    urls = [r["href"] for r in results if r.get("href")]
+    log.info("search_web_urls: %d URL(s) for %r", len(urls), query)
+    return urls
+
+
 search_web_tool = function_tool(search_web)
