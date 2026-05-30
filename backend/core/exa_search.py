@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from exa_py import Exa
 
+from .github_scraper import scrape_github_repo
 from .jina_scraper import scrape_url
 
 log = logging.getLogger(__name__)
@@ -25,6 +26,13 @@ def exa_search_prior_art(sponsor_name: str, source_type: str) -> str:
             include_domains=["devpost.com"],
             contents={"highlights": True},
         )
+    elif source_type == "github":
+        query = f"{sponsor_name} hackathon project built-with"
+        kwargs = dict(
+            num_results=5,
+            include_domains=["github.com"],
+            contents={"highlights": True},
+        )
     else:
         # X/Twitter is often paywalled; cast a wider net for community signals
         query = f"{sponsor_name} hackathon developer community award winner"
@@ -33,13 +41,14 @@ def exa_search_prior_art(sponsor_name: str, source_type: str) -> str:
     log.debug("exa_search [%s/%s]: query=%r", sponsor_name, source_type, query)
     results = exa.search(query, **kwargs)
 
-    # For Devpost results, enrich the top 3 with full page content via Jina Reader
+    # Enrich top 3 results with full content via the appropriate scraper
     scraped: dict[str, str] = {}
-    if source_type == "devpost" and results.results:
+    if results.results and source_type in ("devpost", "github"):
         urls = [r.url for r in results.results[:3]]
-        log.debug("exa_search [%s/devpost]: scraping %d URLs via Jina", sponsor_name, len(urls))
+        scraper = scrape_url if source_type == "devpost" else scrape_github_repo
+        log.debug("exa_search [%s/%s]: enriching %d URLs", sponsor_name, source_type, len(urls))
         with ThreadPoolExecutor(max_workers=3) as pool:
-            futures = {pool.submit(scrape_url, u): u for u in urls}
+            futures = {pool.submit(scraper, u): u for u in urls}
             for fut in as_completed(futures):
                 scraped[futures[fut]] = fut.result()
 

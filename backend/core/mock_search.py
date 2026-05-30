@@ -467,17 +467,91 @@ X (Twitter) posts about {sponsor} at hackathons:
 """
 
 
+_GITHUB_DATA: dict[str, str] = {
+    "groq": """
+GitHub repos using Groq at hackathons:
+
+1. Repository: devhacks/voiceblitz
+   Description: Sub-100ms voice assistant using Groq LLaMA-3 + Whisper + ElevenLabs TTS
+   Stars: 312  Forks: 47
+   Language: Python
+   Topics: groq, llama3, voice-assistant, hackathon, elevenlabs
+
+2. Repository: hackathon-winners/livecoach-groq
+   Description: Real-time sports commentary agent with Groq inference + GPT-4o vision
+   Stars: 189  Forks: 28
+   Language: TypeScript
+   Topics: groq, sports-ai, real-time, websockets
+
+3. Repository: mlh-fellows/flowstate-ide
+   Description: Keystroke-level code completion powered by Groq — sub-50ms per token
+   Stars: 445  Forks: 72
+   Language: TypeScript
+   Topics: groq, ide-plugin, code-completion, vscode
+""",
+
+    "supabase": """
+GitHub repos using Supabase at hackathons:
+
+1. Repository: hackathon-2024/talentgraph
+   Description: Semantic candidate-role matching with pgvector, Supabase Auth, Edge Functions
+   Stars: 278  Forks: 34
+   Language: TypeScript
+   Topics: supabase, pgvector, openai, sveltekit, hackathon
+
+2. Repository: launchweek/cowrite-realtime
+   Description: Conflict-free collaborative writing on Supabase Realtime + Claude suggestions
+   Stars: 156  Forks: 21
+   Language: TypeScript
+   Topics: supabase, realtime, collaborative-editing, anthropic
+
+3. Repository: builders-week/eternavault
+   Description: Digital legacy vault with client-side AES-GCM encryption and Supabase Storage
+   Stars: 203  Forks: 19
+   Language: JavaScript
+   Topics: supabase, encryption, storage, vercel, hackathon
+""",
+}
+
+_GENERIC_GITHUB = """
+GitHub repos using {sponsor} at hackathons:
+
+1. Repository: hackathon-winner/{sponsor_lower}-app
+   Description: Award-winning project built on {sponsor} APIs during a 24-hour hackathon
+   Stars: 142  Forks: 18
+   Language: TypeScript
+   Topics: {sponsor_lower}, hackathon, api-integration
+
+2. Repository: mlh-fellow/{sponsor_lower}-demo
+   Description: Demo showcasing {sponsor} integration with modern web stack
+   Stars: 89  Forks: 12
+   Language: Python
+   Topics: {sponsor_lower}, demo, open-source
+
+3. Repository: buildspace/{sponsor_lower}-starter
+   Description: Starter template for {sponsor} hackathon projects with auth and deployment
+   Stars: 234  Forks: 67
+   Language: TypeScript
+   Topics: {sponsor_lower}, starter-template, hackathon
+"""
+
+
 def mock_search_prior_art(sponsor_name: str, source_type: str) -> str:
     """
-    Return mock Devpost or X/Twitter prior-art data for a given sponsor.
+    Return mock Devpost, X/Twitter, or GitHub prior-art data for a given sponsor.
 
     Args:
         sponsor_name: Name of the sponsor (e.g. 'groq', 'supabase', 'elevenlabs')
-        source_type: Either 'devpost' or 'x'
+        source_type: 'devpost', 'x', or 'github'
     """
     key = sponsor_name.lower().strip()
     if source_type == "devpost":
         return _DEVPOST_DATA.get(key, _GENERIC_DEVPOST.format(sponsor=sponsor_name))
+    elif source_type == "github":
+        return _GITHUB_DATA.get(
+            key,
+            _GENERIC_GITHUB.format(sponsor=sponsor_name, sponsor_lower=key),
+        )
     else:
         return _X_DATA.get(key, _GENERIC_X.format(sponsor=sponsor_name))
 

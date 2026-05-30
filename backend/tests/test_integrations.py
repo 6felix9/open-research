@@ -111,6 +111,81 @@ def test_exa_x():
 
 
 # ---------------------------------------------------------------------------
+# Integration: Exa discovery → scraper pipeline (end-to-end)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
+@pytest.mark.skipif(not _has("JINA_API_KEY"), reason="JINA_API_KEY not set")
+def test_integration_exa_devpost_jina():
+    """Exa discovers Devpost URLs → Jina scrapes them. Verifies scraping actually fired."""
+    from backend.core.exa_search import exa_search_prior_art
+
+    result = exa_search_prior_art("Supabase", "devpost")
+    print("\n[integration: exa+jina/devpost]\n", result[:1200])
+    assert "devpost.com" in result.lower(), "Expected Devpost URLs from Exa"
+    assert "Full content:" in result, \
+        "Expected 'Full content:' — Jina scraping did not fire on Exa-discovered URLs"
+    assert any(kw in result for kw in ("Inspiration", "How we built", "What it does", "Challenges")), \
+        "Expected project body sections in Jina-scraped content, not nav boilerplate"
+
+
+@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
+def test_integration_exa_x_highlights_only():
+    """X source uses Exa highlights only — verifies no scraping is attempted."""
+    from backend.core.exa_search import exa_search_prior_art
+
+    result = exa_search_prior_art("Supabase", "x")
+    print("\n[integration: exa/x highlights]\n", result[:800])
+    assert len(result) > 50
+    assert "Full content:" not in result, \
+        "X should use Exa highlights only — scraping is not wired for this source"
+
+
+# ---------------------------------------------------------------------------
+# GitHub REST API scraper
+# ---------------------------------------------------------------------------
+
+def test_github_scraper():
+    """No token required — public API. supabase/supabase is a stable, well-known repo."""
+    from backend.core.github_scraper import scrape_github_repo
+
+    result = scrape_github_repo("https://github.com/supabase/supabase")
+    print("\n[github/supabase-supabase]\n", result)
+    assert isinstance(result, str)
+    assert len(result) > 100
+    assert "Stars:" in result
+    assert "supabase" in result.lower()
+    assert "README" in result
+
+
+@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
+def test_exa_github():
+    from backend.core.exa_search import exa_search_prior_art
+
+    result = exa_search_prior_art("Supabase", "github")
+    print("\n[exa/github]\n", result[:800])
+    assert isinstance(result, str)
+    assert "github.com" in result.lower()
+    assert len(result) > 100
+
+
+@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
+def test_integration_exa_github_rest_api():
+    """Exa discovers GitHub URLs → REST API enriches them. Verifies scraping actually fired."""
+    from backend.core.exa_search import exa_search_prior_art
+
+    result = exa_search_prior_art("Supabase", "github")
+    print("\n[integration: exa+github-api]\n", result[:1200])
+    assert "github.com" in result.lower(), "Expected GitHub URLs from Exa"
+    assert "Full content:" in result, \
+        "Expected 'Full content:' — GitHub REST API scraping did not fire on Exa-discovered URLs"
+    assert "Stars:" in result, \
+        "Expected 'Stars:' from GitHub repo metadata"
+    assert "README" in result, \
+        "Expected README excerpt from GitHub REST API"
+
+
+# ---------------------------------------------------------------------------
 # Firecrawl via fetch_url_contents
 # ---------------------------------------------------------------------------
 
