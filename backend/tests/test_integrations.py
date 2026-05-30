@@ -81,17 +81,6 @@ def test_integration_exa_devpost_jina():
         "Expected project body sections in Jina-scraped content, not nav boilerplate"
 
 
-@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
-def test_integration_exa_x_highlights_only():
-    """X source uses Exa highlights only — verifies no scraping is attempted."""
-    from backend.core.exa_search import exa_search_prior_art
-
-    result = exa_search_prior_art("Supabase", "x")
-    print("\n[integration: exa/x highlights]\n", result[:800])
-    assert len(result) > 50
-    assert "Full content:" not in result, \
-        "X should use Exa highlights only — scraping is not wired for this source"
-
 
 # ---------------------------------------------------------------------------
 # GitHub REST API scraper

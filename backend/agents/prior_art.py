@@ -12,13 +12,12 @@ log = logging.getLogger(__name__)
 
 INSTRUCTIONS = """
 You are a hackathon prior-art analyst. Given a sponsor name and their developer profile,
-search Devpost, X (Twitter), and GitHub for past hackathon projects that used this sponsor.
+search Devpost and GitHub for past hackathon projects that used this sponsor.
 
 Steps:
 1. Call search_prior_art with source_type="devpost" to get Devpost project listings.
-2. Call search_prior_art with source_type="x" to get X/Twitter posts and hype signals.
-3. Call search_prior_art with source_type="github" to get GitHub repo metadata and README excerpts.
-4. Synthesize a concise Markdown summary covering exactly these three points:
+2. Call search_prior_art with source_type="github" to get GitHub repo metadata and README excerpts.
+3. Synthesize a concise Markdown summary covering exactly these three points:
 
    **Winning problem categories** — What real-world problems do winning projects solve?
    **Technical crux** — How was this sponsor's technology integrated at its core?
@@ -28,14 +27,8 @@ Keep the summary under 300 words. Be specific — quote project names and stats 
 """
 
 
-# DEFERRED: Twitter (X) scraping via Scrapling StealthyFetcher.
-#           X content is increasingly login-gated, requiring session cookie management
-#           and headless browser overhead. Exa highlights already surface community
-#           signals (winner announcements, blog posts) at sufficient quality for synthesis.
-#           Revisit if richer tweet-level data becomes a clear need.
-
 def search_prior_art(sponsor_name: str, source_type: str) -> str:
-    """Search Devpost, X, or GitHub for hackathon prior art for this sponsor."""
+    """Search Devpost or GitHub for hackathon prior art for this sponsor."""
     return exa_search_prior_art(sponsor_name, source_type)
 
 
@@ -53,7 +46,7 @@ async def research_prior_art_task(sponsor_name: str, sponsor_profile: str) -> st
     prompt = (
         f"Sponsor: {sponsor_name}\n\n"
         f"Sponsor profile summary:\n{sponsor_profile[:800]}\n\n"
-        "Search Devpost, X, and GitHub for prior hackathon projects that used this sponsor, "
+        "Search Devpost and GitHub for prior hackathon projects that used this sponsor, "
         "then produce the three-point prior-art summary."
     )
     t0 = time.perf_counter()

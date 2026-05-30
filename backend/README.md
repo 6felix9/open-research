@@ -85,7 +85,7 @@ backend/
 │   └── synthesizer.py       # Phase 3: Synthesizer agent + all Pydantic models
 ├── core/
 │   ├── cache.py             # ChromaDB sponsor profile cache
-│   ├── exa_search.py        # Exa AI discovery (devpost / x / github)
+│   ├── exa_search.py        # Exa AI discovery (devpost / github)
 │   ├── jina_scraper.py      # Jina Reader scraper for Devpost pages
 │   ├── github_scraper.py    # GitHub REST API scraper (metadata + README)
 │   ├── fetch_urls.py        # Firecrawl / httpx URL scraping (Phase 1)
@@ -157,30 +157,26 @@ graph TD
 
 ### Phase 2 — Prior Art Scan
 
-For each sponsor, searches Devpost, X/community, and GitHub for prior hackathon projects and signals. Runs in parallel across sponsors using the same task-pool pattern as Phase 1.
+For each sponsor, searches Devpost and GitHub for prior hackathon projects. Runs in parallel across sponsors using the same task-pool pattern as Phase 1.
 
-Agent: `PriorArtResearcher` — receives sponsor name + first 800 chars of the Phase 1 profile as context. Calls `search_prior_art` three times (devpost, x, github), then synthesises a Markdown summary (≤300 words) covering winning problem categories, technical crux, and judge/community signals.
+Agent: `PriorArtResearcher` — receives sponsor name + first 800 chars of the Phase 1 profile as context. Calls `search_prior_art` twice (devpost, github), then synthesises a Markdown summary (≤300 words) covering winning problem categories, technical crux, and judge/community signals.
 
 ```mermaid
 graph TD
     Task["research_prior_art_task\n(sponsor_name, sponsor_profile)"] --> Agent["PriorArtResearcher Agent\nOpenAI Agents SDK"]
 
     Agent -->|"step 1"| ToolDevpost["search_prior_art\nsource_type=devpost"]
-    Agent -->|"step 2"| ToolX["search_prior_art\nsource_type=x"]
-    Agent -->|"step 3"| ToolGithub["search_prior_art\nsource_type=github"]
+    Agent -->|"step 2"| ToolGithub["search_prior_art\nsource_type=github"]
 
     ToolDevpost --> ExaDevpost["Exa Search\ninclude_domains: devpost.com\nnum_results: 5"]
     ExaDevpost --> Jina["Jina Reader r.jina.ai\nParallel scrape top 3 URLs\nX-Remove-Selector: nav/header\n6 000 char limit per page"]
     Jina --> DevpostOut["Title + URL\n+ Full project content\n(Inspiration, How we built,\nChallenges sections)"]
 
-    ToolX --> ExaX["Exa Search\nbroad query, no domain filter\nnum_results: 5"]
-    ExaX --> XOut["Title + URL\n+ Exa highlights only\n(winner posts, blog articles)"]
-
     ToolGithub --> ExaGithub["Exa Search\ninclude_domains: github.com\nnum_results: 5"]
     ExaGithub --> GithubAPI["GitHub REST API\nGET /repos/owner/repo\nGET /repos/owner/repo/readme\nParallel, top 3 URLs"]
     GithubAPI --> GithubOut["Title + URL\n+ Stars, forks, language,\ntopics + README excerpt"]
 
-    DevpostOut & XOut & GithubOut --> Synthesis["Agent synthesises\n3-point Markdown summary ≤300 words\nWinning categories · Tech crux · Judge signals"]
+    DevpostOut & GithubOut --> Synthesis["Agent synthesises\n3-point Markdown summary ≤300 words\nWinning categories · Tech crux · Judge signals"]
     Synthesis --> PriorArtOut["prior_art_summary str\npassed to Phase 3"]
 ```
 
