@@ -30,8 +30,11 @@ Keep the summary under 300 words. Be specific — quote project names and stats 
 """
 
 
-# TODO: Implement Twitter (X) scraping phase:
-#       - Twitter (X) URLs -> Scrape posts/hype signals using Scrapling StealthyFetcher (https://github.com/D4Vinci/Scrapling).
+# DEFERRED: Twitter (X) scraping via Scrapling StealthyFetcher.
+#           X content is increasingly login-gated, requiring session cookie management
+#           and headless browser overhead. Exa highlights already surface community
+#           signals (winner announcements, blog posts) at sufficient quality for synthesis.
+#           Revisit if richer tweet-level data becomes a clear need.
 
 def search_prior_art(sponsor_name: str, source_type: str) -> str:
     """Search Devpost, X, or GitHub for hackathon prior art for this sponsor."""

@@ -237,8 +237,9 @@ Devpost prior art for Pinecone:
 """,
 }
 
-# TODO: X (Twitter) scraping will remain mocked for now as part of the new discovery pipeline.
-#       When ready, replace this with Scrapling StealthyFetcher (https://github.com/D4Vinci/Scrapling) to bypass Twitter login and rate-limiting blocks.
+# DEFERRED: X (Twitter) scraping via Scrapling StealthyFetcher.
+#           Exa highlights provide sufficient community signal for synthesis.
+#           X login-gating and anti-bot overhead outweigh the marginal gain.
 
 
 
