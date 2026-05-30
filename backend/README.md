@@ -19,14 +19,32 @@ docker-compose up
 Copy `.env.example` to `.env.local` in the repo root and fill in your keys:
 
 ```
-OPENAI_API_KEY=        # required for live agents; omit to run in fallback mode
-FIRECRAWL_API_KEY=     # Phase 1 sponsor URL scraping; falls back to httpx
-EXA_API_KEY=           # Phase 2 prior art discovery; falls back to mock data
-JINA_API_KEY=          # Phase 2 Devpost scraping; works without key at lower rate limits
-GITHUB_TOKEN=          # Phase 2 GitHub scraping; optional, raises API rate limit
+OPENAI_API_KEY=        # required — LLM agents (all three phases)
+FIRECRAWL_API_KEY=     # required — Phase 1 sponsor URL scraping
+EXA_API_KEY=           # required — Phase 2 prior art discovery
+JINA_API_KEY=          # required — Phase 2 Devpost scraping
+GITHUB_TOKEN=          # required — Phase 2 GitHub scraping
 ```
 
+All five keys must be present before the pipeline will run. The frontend checks `GET /api/config/keys` on Run and surfaces any missing keys before opening the stream.
+
 ## API
+
+### `GET /api/config/keys`
+
+Returns a JSON object showing whether each required API key is present in the environment.
+
+```json
+{
+  "OPENAI_API_KEY": true,
+  "EXA_API_KEY": true,
+  "FIRECRAWL_API_KEY": false,
+  "JINA_API_KEY": true,
+  "GITHUB_TOKEN": false
+}
+```
+
+The frontend calls this on every Run click before opening the stream. If any value is `false`, the pipeline is blocked and the missing keys are shown to the user.
 
 ### `GET /api/research/stream`
 
@@ -43,13 +61,13 @@ Returns an `EventSourceResponse` (SSE). All pipeline progress, results, and erro
 | `depth` | `int` | No | Research depth 0–3 (default 1) |
 | `custom_sponsor_urls` | `str` | No | Comma-separated URLs to scrape for sponsor docs |
 
-Returns HTTP 422 if `sponsors` or `theme` are missing.
+Returns HTTP 422 if `sponsors` or `theme` are missing, or if any of the five required API keys are absent from the environment.
 
 ### SSE Event Protocol
 
 | Event | Payload | Notes |
 |---|---|---|
-| `log` | `{id, step, text, final?}` | Pipeline progress; `step` format is `"NN · LABEL"` |
+| `log` | `{id, step, text, final?, error?}` | Pipeline progress; `step` format is `"NN · LABEL"`; `error: true` on failures |
 | `synergy` | `{text}` | One-line sponsor synergy insight |
 | `ideas` | `IdeaBrief[]` | Final ranked idea list |
 | `done` | `{}` | Stream complete — close the EventSource |
@@ -72,9 +90,7 @@ backend/
 │   ├── github_scraper.py    # GitHub REST API scraper (metadata + README)
 │   ├── fetch_urls.py        # Firecrawl / httpx URL scraping (Phase 1)
 │   ├── search.py            # DuckDuckGo search (tool + raw URL helper)
-│   ├── stream.py            # SSE serialization helper
-│   ├── fallback.py          # Static profiles/ideas for zero-key mode
-│   └── mock_search.py       # Mock prior-art data (no-key fallback)
+│   └── stream.py            # SSE serialization helper
 └── tests/
     └── test_integrations.py # Integration tests for all scrapers + Exa pipeline
 ```
@@ -107,10 +123,7 @@ graph TD
     end
 
     subgraph "profile_sponsor_task (sponsor_profiler.py)"
-        SpawnTask --> CheckAPIKey{"has_api_key()?"}
-        CheckAPIKey -- No --> Fallback["fallback_sponsor_profile(sponsor)"]
-
-        CheckAPIKey -- Yes --> RouteSource{"custom_urls\nprovided?"}
+        SpawnTask --> RouteSource{"custom_urls\nprovided?"}
 
         RouteSource -- Yes --> FetchCustom["fetch_url_contents(custom_urls)"]
 
@@ -126,8 +139,7 @@ graph TD
         BuildPromptDocs --> RunAgent["Run SponsorProfiler Agent (LLM)\n+ search_web_tool as fallback"]
         BuildPromptFallback --> RunAgent
 
-        Fallback --> ProfileText["Profile Text"]
-        RunAgent --> ProfileText
+        RunAgent --> ProfileText["Profile Text"]
     end
 
     subgraph "Post-Profiling (research.py)"
@@ -151,33 +163,25 @@ Agent: `PriorArtResearcher` — receives sponsor name + first 800 chars of the P
 
 ```mermaid
 graph TD
-    Task["research_prior_art_task\n(sponsor_name, sponsor_profile)"] --> APICheck{"has OPENAI_API_KEY?"}
-    APICheck -- No --> FallbackSummary["fallback_prior_art_summary()\nstatic Markdown"]
-
-    APICheck -- Yes --> Agent["PriorArtResearcher Agent\nOpenAI Agents SDK"]
+    Task["research_prior_art_task\n(sponsor_name, sponsor_profile)"] --> Agent["PriorArtResearcher Agent\nOpenAI Agents SDK"]
 
     Agent -->|"step 1"| ToolDevpost["search_prior_art\nsource_type=devpost"]
     Agent -->|"step 2"| ToolX["search_prior_art\nsource_type=x"]
     Agent -->|"step 3"| ToolGithub["search_prior_art\nsource_type=github"]
 
-    ToolDevpost & ToolX & ToolGithub --> ExaCheck{"has EXA_API_KEY?"}
-
-    ExaCheck -- No --> Mock["mock_search_prior_art()\nstatic fixture data"]
-
-    ExaCheck -- "Yes / devpost" --> ExaDevpost["Exa Search\ninclude_domains: devpost.com\nnum_results: 5"]
+    ToolDevpost --> ExaDevpost["Exa Search\ninclude_domains: devpost.com\nnum_results: 5"]
     ExaDevpost --> Jina["Jina Reader r.jina.ai\nParallel scrape top 3 URLs\nX-Remove-Selector: nav/header\n6 000 char limit per page"]
     Jina --> DevpostOut["Title + URL\n+ Full project content\n(Inspiration, How we built,\nChallenges sections)"]
 
-    ExaCheck -- "Yes / x" --> ExaX["Exa Search\nbroad query, no domain filter\nnum_results: 5"]
+    ToolX --> ExaX["Exa Search\nbroad query, no domain filter\nnum_results: 5"]
     ExaX --> XOut["Title + URL\n+ Exa highlights only\n(winner posts, blog articles)"]
 
-    ExaCheck -- "Yes / github" --> ExaGithub["Exa Search\ninclude_domains: github.com\nnum_results: 5"]
+    ToolGithub --> ExaGithub["Exa Search\ninclude_domains: github.com\nnum_results: 5"]
     ExaGithub --> GithubAPI["GitHub REST API\nGET /repos/owner/repo\nGET /repos/owner/repo/readme\nParallel, top 3 URLs"]
     GithubAPI --> GithubOut["Title + URL\n+ Stars, forks, language,\ntopics + README excerpt"]
 
-    DevpostOut & XOut & GithubOut & Mock --> Synthesis["Agent synthesises\n3-point Markdown summary ≤300 words\nWinning categories · Tech crux · Judge signals"]
-    FallbackSummary --> PriorArtOut["prior_art_summary str\npassed to Phase 3"]
-    Synthesis --> PriorArtOut
+    DevpostOut & XOut & GithubOut --> Synthesis["Agent synthesises\n3-point Markdown summary ≤300 words\nWinning categories · Tech crux · Judge signals"]
+    Synthesis --> PriorArtOut["prior_art_summary str\npassed to Phase 3"]
 ```
 
 ### Phase 3 — Synthesis
@@ -186,12 +190,16 @@ A single sequential call to `synthesize_task()`. The `Synthesizer` agent reasons
 
 No external tools — pure reasoning over provided context. On success emits a `synergy` event followed by an `ideas` event. On failure emits an error log and `done`.
 
-> **Note:** Pipeline diagram TBD.
-
 ```mermaid
-%% Phase 3 — Synthesis pipeline diagram (placeholder)
 graph TD
-    placeholder["TODO: Phase 3 pipeline diagram"]
+    Input["synthesize_task(\nsponsors, theme, interests, skills,\nseed, time_budget,\nsponsor_profiles, prior_art_summaries)"] --> BuildPrompt["Build prompt:\n· Truncate each profile to 600 chars\n· Concatenate prior-art summaries\n· Inject user brief"]
+    BuildPrompt --> RunAgent["Run Synthesizer Agent\noutput_type=SynthesisResult\n(no tools — pure reasoning)"]
+    RunAgent --> Success{"Success?"}
+    Success -- Yes --> EmitSynergy["Emit SSE: synergy\n{text: result.synergy}"]
+    EmitSynergy --> EmitIdeas["Emit SSE: ideas\n[IdeaBrief × 5–8, ranked by match score]"]
+    EmitIdeas --> EmitDone["Emit SSE: done"]
+    Success -- No --> EmitError["Emit SSE: log\n{error: true, final: true}\n'Synthesis failed'"]
+    EmitError --> EmitDone
 ```
 
 ## Pydantic Models
@@ -211,11 +219,11 @@ SynthesisResult  synergy: str, ideas: list[IdeaBrief]
 
 | Variable | Required | Default | Notes |
 |---|---|---|---|
-| `OPENAI_API_KEY` | No | — | Absence triggers full fallback mode |
-| `FIRECRAWL_API_KEY` | No | — | Phase 1 URL scraping; falls back to httpx |
-| `EXA_API_KEY` | No | — | Phase 2 discovery; falls back to mock data |
-| `JINA_API_KEY` | No | — | Phase 2 Devpost scraping; works without key at lower rate limits |
-| `GITHUB_TOKEN` | No | — | Phase 2 GitHub scraping; raises rate limit from 60 to 5 000 req/hr |
+| `OPENAI_API_KEY` | **Yes** | — | LLM agents (all three phases) |
+| `FIRECRAWL_API_KEY` | **Yes** | — | Phase 1 sponsor URL scraping |
+| `EXA_API_KEY` | **Yes** | — | Phase 2 prior art discovery |
+| `JINA_API_KEY` | **Yes** | — | Phase 2 Devpost scraping |
+| `GITHUB_TOKEN` | **Yes** | — | Phase 2 GitHub scraping; raises rate limit from 60 to 5 000 req/hr |
 | `OPENAI_AGENTS_DISABLE_TRACING` | No | — | Set to `"1"` in `main.py` at startup |
 | `CHROMA_HOST` | No | — | If set, uses ChromaDB HTTP server |
 | `CHROMA_PORT` | No | `8000` | Used with `CHROMA_HOST` |
@@ -223,10 +231,6 @@ SynthesisResult  synergy: str, ideas: list[IdeaBrief]
 | `SPONSOR_PROFILE_TTL_DAYS` | No | `7` | Sponsor profile cache TTL in days |
 
 Loaded from `.env` and `.env.local` in both `backend/` and the repo root.
-
-## Fallback Mode
-
-When `OPENAI_API_KEY` is absent all three agents return pre-written static data from `core/fallback.py`. The full SSE stream fires normally — the frontend cannot distinguish fallback mode from live mode. Covers 8 built-in sponsors: Groq, Anthropic, Modal, Supabase, Vercel, ElevenLabs, Mistral, Pinecone.
 
 ## Error Handling
 
