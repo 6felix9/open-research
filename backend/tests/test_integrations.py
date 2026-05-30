@@ -17,29 +17,6 @@ def _has(key: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Mock search (no API key required)
-# ---------------------------------------------------------------------------
-
-def test_mock_search_devpost():
-    from backend.core.mock_search import mock_search_prior_art
-
-    result = mock_search_prior_art("supabase", "devpost")
-    print("\n[mock/devpost]\n", result[:500])
-    assert isinstance(result, str)
-    assert len(result) > 100
-    assert "Supabase" in result or "supabase" in result.lower()
-
-
-def test_mock_search_x():
-    from backend.core.mock_search import mock_search_prior_art
-
-    result = mock_search_prior_art("supabase", "x")
-    print("\n[mock/x]\n", result[:500])
-    assert isinstance(result, str)
-    assert len(result) > 100
-
-
-# ---------------------------------------------------------------------------
 # Jina Reader scraper
 # ---------------------------------------------------------------------------
 
@@ -83,31 +60,6 @@ def test_jina_scraper_hackmate():
     assert "Supabase" in result
     assert any(kw in result for kw in ("Inspiration", "How we built", "Challenges", "What it does")), \
         "Expected project body sections"
-
-
-# ---------------------------------------------------------------------------
-# Exa search (Devpost domain-filtered + broad X/community)
-# ---------------------------------------------------------------------------
-
-@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
-def test_exa_devpost():
-    from backend.core.exa_search import exa_search_prior_art
-
-    result = exa_search_prior_art("Supabase", "devpost")
-    print("\n[exa/devpost]\n", result[:800])
-    assert isinstance(result, str)
-    assert "devpost.com" in result.lower() or len(result) > 50, \
-        "Expected Devpost URLs or content from Exa"
-
-
-@pytest.mark.skipif(not _has("EXA_API_KEY"), reason="EXA_API_KEY not set")
-def test_exa_x():
-    from backend.core.exa_search import exa_search_prior_art
-
-    result = exa_search_prior_art("Supabase", "x")
-    print("\n[exa/x]\n", result[:800])
-    assert isinstance(result, str)
-    assert len(result) > 50, "Expected community signal results from Exa"
 
 
 # ---------------------------------------------------------------------------

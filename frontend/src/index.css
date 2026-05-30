@@ -78,6 +78,7 @@
   --amber-glow: oklch(0.62 0.150 50 / 0.18);
   --done: oklch(0.52 0.130 155);
   --pending: oklch(0.72 0.008 80);
+  --error: oklch(0.52 0.200 25);
 
   --grain-blend: multiply;
   --grain-opacity: 0.025;

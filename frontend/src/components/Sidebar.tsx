@@ -21,6 +21,7 @@ interface SidebarProps {
   customSponsorUrls: string[]
   addCustomSponsorUrl: (url: string) => void
   removeCustomSponsorUrl: (url: string) => void
+  keysConfig?: Record<string, boolean> | null
 }
 
 const DEPTH_LABELS = ['S', 'M', 'L', 'XL']
@@ -36,6 +37,7 @@ export default function Sidebar({
   depth, setDepth,
   runState, onRun,
   customSponsorUrls, addCustomSponsorUrl, removeCustomSponsorUrl,
+  keysConfig,
 }: SidebarProps) {
   const [urlInput, setUrlInput] = useState('')
 
@@ -45,6 +47,9 @@ export default function Sidebar({
     addCustomSponsorUrl(trimmed)
     setUrlInput('')
   }
+
+  const allKeysPresent = keysConfig ? Object.values(keysConfig).every(Boolean) : true
+  const missingKeys = keysConfig ? Object.entries(keysConfig).filter(([, ok]) => !ok).map(([key]) => key) : []
 
   return (
     <aside className="grid grid-rows-[auto_1fr_auto] bg-bg-1 border-r border-line-0 min-h-0">
@@ -204,11 +209,27 @@ export default function Sidebar({
       </div>
 
       <div className="border-t border-dashed border-line-0 pt-[14px] px-[20px] pb-[18px] bg-bg-1 flex flex-col gap-[10px]">
+        {!allKeysPresent && (
+          <div className="text-[11.5px] p-[10px_12px] bg-[color-mix(in_oklch,var(--s-1)_8%,var(--bg-0))] border border-[color-mix(in_oklch,var(--s-1)_25%,var(--line-0))] rounded-[6px] text-ink-2 font-mono leading-[1.4] mb-[4px]">
+            <div className="text-ink-0 font-sans font-medium mb-[4px] text-[12px] flex items-center gap-[6px]">
+              <span className="w-[6px] h-[6px] rounded-full bg-[oklch(0.6_0.2_25)] animate-pulse" />
+              Missing API Keys
+            </div>
+            <p className="text-[10px] text-ink-3 mb-[6px]">
+              The following keys must be added to your <code className="text-ink-1">.env.local</code> file. Please restart the backend server after adding them:
+            </p>
+            <div className="flex flex-wrap gap-[4px] mt-[4px]">
+              {missingKeys.map(k => (
+                <span key={k} className="text-[9px] font-mono tracking-[0.04em] font-semibold text-ink-1 bg-bg-2 border border-line-0 px-[6px] py-[2px] rounded-md">{k}</span>
+              ))}
+            </div>
+          </div>
+        )}
         <button
           className="flex items-center justify-between gap-[8px] py-[12px] px-[16px] rounded-md border border-amber-dim bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_20%,var(--bg-2)),var(--bg-2))] text-ink-0 font-sans text-[13px] font-medium cursor-pointer transition-all duration-[140ms] ease-out text-left tracking-[0.01em] w-full hover:enabled:bg-[linear-gradient(180deg,color-mix(in_oklch,var(--amber)_30%,var(--bg-2)),color-mix(in_oklch,var(--amber)_10%,var(--bg-2)))] hover:enabled:shadow-[0_0_0_3px_var(--amber-glow)] active:enabled:translate-y-[1px] data-[state=running]:border-amber-theme data-[state=running]:bg-bg-2 data-[state=running]:text-ink-0 data-[state=running]:cursor-progress disabled:opacity-40 disabled:cursor-not-allowed"
           data-state={runState}
           onClick={onRun}
-          disabled={runState === 'running' || selectedSponsors.size === 0 || !theme.trim()}
+          disabled={runState === 'running' || selectedSponsors.size === 0 || !theme.trim() || !allKeysPresent}
         >
           <span>
             {runState === 'running' ? 'Researching…' : runState === 'done' ? 'Run again' : 'Research ideas'}

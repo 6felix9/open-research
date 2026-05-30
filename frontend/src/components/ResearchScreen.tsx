@@ -7,7 +7,9 @@ interface ResearchScreenProps {
 }
 
 export default function ResearchScreen({ logs, synergyText }: ResearchScreenProps) {
-  const isDone = logs.length > 0 && logs[logs.length - 1].final === true
+  const lastEntry = logs[logs.length - 1]
+  const isError = logs.length > 0 && lastEntry.error === true
+  const isDone = logs.length > 0 && lastEntry.final === true
   const progress = isDone ? 100 : Math.min((logs.length / 8) * 90, 90)
 
   return (
@@ -16,10 +18,10 @@ export default function ResearchScreen({ logs, synergyText }: ResearchScreenProp
         <div className="flex items-center gap-[12px]">
           <img src="/image.png" className="w-[28px] h-[28px] object-contain rounded-[6px] opacity-85 theme-invert-img" alt="" />
           <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-ink-2">
-            {isDone ? 'Research complete' : 'Researching…'}
+            {isError ? 'Research failed' : isDone ? 'Research complete' : 'Researching…'}
           </span>
         </div>
-        <span className="w-[7px] h-[7px] rounded-full bg-pending data-[state=running]:bg-amber-theme data-[state=running]:shadow-[0_0_0_4px_var(--amber-glow)] data-[state=running]:animate-pulse-slow data-[state=done]:bg-done" data-state={isDone ? 'done' : 'running'} />
+        <span className="w-[7px] h-[7px] rounded-full bg-pending data-[state=running]:bg-amber-theme data-[state=running]:shadow-[0_0_0_4px_var(--amber-glow)] data-[state=running]:animate-pulse-slow data-[state=done]:bg-done data-[state=error]:bg-[var(--error)]" data-state={isError ? 'error' : isDone ? 'done' : 'running'} />
       </div>
 
       <div className="h-[2px] bg-line-0 shrink-0 relative overflow-hidden">
@@ -29,7 +31,8 @@ export default function ResearchScreen({ logs, synergyText }: ResearchScreenProp
       <div className="flex-1 overflow-y-auto py-[24px] px-0 pb-[40px] [&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[4px]">
         <div className="max-w-[780px] mx-auto px-[32px] py-0">
           {logs.map((entry, i) => {
-            const state = isDone ? 'done' : i < logs.length - 1 ? 'done' : 'running'
+            const isLastEntry = i === logs.length - 1
+            const state = entry.error ? 'error' : isDone ? 'done' : isLastEntry ? 'running' : 'done'
             return (
               <LogRow
                 key={entry.id}

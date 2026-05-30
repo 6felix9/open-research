@@ -1,5 +1,5 @@
 interface LogRowProps {
-  state: 'done' | 'running' | 'idle'
+  state: 'done' | 'running' | 'idle' | 'error'
   step: string
   text?: string
   quote?: string
@@ -22,12 +22,15 @@ export default function LogRow({ state, step, text, quote, animate, variant = 'c
       data-animate={animate ? 'true' : undefined}
     >
       <div className="flex items-center justify-center pt-[3px]">
-        <span 
+        <span
           className="w-[10px] h-[10px] rounded-full border border-line-1 bg-bg-1 relative shrink-0
             data-[state=done]:bg-done data-[state=done]:border-done
             data-[state=done]:after:content-[''] data-[state=done]:after:absolute data-[state=done]:after:left-[2px] data-[state=done]:after:top-[1px] data-[state=done]:after:w-[3px] data-[state=done]:after:h-[5px] data-[state=done]:after:border-r-[1.5px] data-[state=done]:after:border-r-bg-0 data-[state=done]:after:border-b-[1.5px] data-[state=done]:after:border-b-bg-0 data-[state=done]:after:rotate-45
             data-[state=running]:bg-amber-theme data-[state=running]:border-amber-theme data-[state=running]:animate-pulse-icon
             data-[state=idle]:bg-bg-0 data-[state=idle]:border-dashed
+            data-[state=error]:bg-[var(--error)] data-[state=error]:border-[var(--error)]
+            data-[state=error]:before:content-[''] data-[state=error]:before:absolute data-[state=error]:before:w-[1.5px] data-[state=error]:before:h-[7px] data-[state=error]:before:bg-bg-0 data-[state=error]:before:left-[4px] data-[state=error]:before:top-[1.5px] data-[state=error]:before:rotate-45
+            data-[state=error]:after:content-[''] data-[state=error]:after:absolute data-[state=error]:after:w-[1.5px] data-[state=error]:after:h-[7px] data-[state=error]:after:bg-bg-0 data-[state=error]:after:left-[4px] data-[state=error]:after:top-[1.5px] data-[state=error]:after:-rotate-45
           "
           data-state={state} 
         />

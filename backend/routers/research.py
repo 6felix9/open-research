@@ -16,6 +16,7 @@ Phase flow (sequential, phases 1 & 2 parallel per-sponsor internally):
 
 import asyncio
 import logging
+import os
 
 from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
@@ -28,6 +29,13 @@ from ..core.cache import cache_profile, get_cached_profile, normalize_sponsor_na
 from ..core.stream import sse
 
 router = APIRouter()
+
+_REQUIRED_KEYS = ["OPENAI_API_KEY", "EXA_API_KEY", "FIRECRAWL_API_KEY", "JINA_API_KEY", "GITHUB_TOKEN"]
+
+
+@router.get("/config/keys")
+async def get_config_keys() -> dict[str, bool]:
+    return {k: bool(os.getenv(k)) for k in _REQUIRED_KEYS}
 
 
 def _url_matches_sponsor(url: str, sponsor_name: str) -> bool:
@@ -377,6 +385,18 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
     yield sse("done", {})
 
 
+@router.get("/config/keys")
+async def get_config_keys():
+    """Return whether each required API key/token is configured in the environment."""
+    return {
+        "OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY")),
+        "EXA_API_KEY": bool(os.getenv("EXA_API_KEY")),
+        "FIRECRAWL_API_KEY": bool(os.getenv("FIRECRAWL_API_KEY")),
+        "JINA_API_KEY": bool(os.getenv("JINA_API_KEY")),
+        "GITHUB_TOKEN": bool(os.getenv("GITHUB_TOKEN")),
+    }
+
+
 @router.get("/research/stream")
 async def stream_research(
     sponsors: str = "",
@@ -390,13 +410,22 @@ async def stream_research(
 ):
     """Stream the research pipeline as Server-Sent Events.
 
-    Validates required params, then hands off to _generate() which yields
-    SSE dicts consumed by EventSourceResponse.
+    Validates required params and API keys, then hands off to _generate()
+    which yields SSE dicts consumed by EventSourceResponse.
     """
     if not _parse_csv(sponsors):
         raise HTTPException(status_code=422, detail="sponsors is required")
     if not theme.strip():
         raise HTTPException(status_code=422, detail="theme is required")
+
+    required_keys = ["OPENAI_API_KEY", "EXA_API_KEY", "FIRECRAWL_API_KEY", "JINA_API_KEY", "GITHUB_TOKEN"]
+    missing_keys = [k for k in required_keys if not os.getenv(k)]
+    if missing_keys:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Missing required environment variables: {', '.join(missing_keys)}"
+        )
+
     return EventSourceResponse(
         _generate(sponsors, interests, theme, seed, skills, time_budget, depth, custom_sponsor_urls)
     )

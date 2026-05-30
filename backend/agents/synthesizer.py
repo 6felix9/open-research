@@ -7,8 +7,6 @@ from typing import Literal
 from agents import Agent, Runner
 from pydantic import BaseModel
 
-from ..core.fallback import fallback_synthesis, has_api_key
-
 log = logging.getLogger(__name__)
 
 
@@ -80,9 +78,6 @@ async def synthesize_task(
     sponsor_profiles: dict[str, str],
     prior_art_summaries: dict[str, str],
 ) -> SynthesisResult:
-    if not has_api_key():
-        log.info("synthesizer: no API key — using fallback synthesis")
-        return fallback_synthesis(sponsors, interests, theme, seed, skills, time_budget)  # type: ignore[return-value]
     log.info(
         "synthesizer: starting (sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, profiles=%d, prior_art=%d)",
         sponsors, interests, theme or "none", seed or "none", skills, time_budget or "unset",

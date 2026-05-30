@@ -6,7 +6,6 @@ import time
 
 from agents import Agent, Runner
 
-from ..core.fallback import fallback_sponsor_profile, has_api_key
 from ..core.fetch_urls import fetch_url_contents
 from ..core.search import search_web_tool, search_web_urls
 
@@ -40,10 +39,6 @@ sponsor_profiler_agent = Agent(
 
 
 async def profile_sponsor_task(sponsor: str, custom_urls: list[str] | None = None) -> str:
-    if not has_api_key():
-        log.info("sponsor_profiler [%s]: no API key — using fallback profile", sponsor)
-        return fallback_sponsor_profile(sponsor)
-
     if custom_urls:
         log.info("sponsor_profiler [%s]: fetching %d custom URL(s)", sponsor, len(custom_urls))
         docs_content = await fetch_url_contents(custom_urls)

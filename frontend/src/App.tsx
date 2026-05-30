@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from './components/Sidebar'
 import EmptyState from './components/EmptyState'
 import ResearchScreen from './components/ResearchScreen'
@@ -24,20 +24,55 @@ function App() {
   const [runState, setRunState] = useState<'idle' | 'running' | 'done'>('idle')
   const [showLog, setShowLog] = useState(false)
   const [customSponsorUrls, setCustomSponsorUrls] = useState<string[]>([])
+  const [keysConfig, setKeysConfig] = useState<Record<string, boolean> | null>(null)
 
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [synergyText, setSynergyText] = useState('')
   const [ideas, setIdeas] = useState<Idea[]>([])
 
+  useEffect(() => {
+    fetch('/api/config/keys')
+      .then(res => {
+        if (!res.ok) throw new Error('Backend config check failed')
+        return res.json()
+      })
+      .then(data => setKeysConfig(data))
+      .catch(err => {
+        console.error('Failed to fetch keys config:', err)
+        setKeysConfig({
+          OPENAI_API_KEY: false,
+          EXA_API_KEY: false,
+          FIRECRAWL_API_KEY: false,
+          JINA_API_KEY: false,
+          GITHUB_TOKEN: false
+        })
+      })
+  }, [])
+
   const addCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => [...prev, url])
   const removeCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => prev.filter(u => u !== url))
 
-  const handleRun = () => {
+  const handleRun = async () => {
     setLogs([])
     setSynergyText('')
     setIdeas([])
     setRunState('running')
     setShowLog(false)
+
+    try {
+      const res = await fetch('/api/config/keys')
+      const keys: Record<string, boolean> = await res.json()
+      const missing = Object.entries(keys).filter(([, ok]) => !ok).map(([k]) => k)
+      if (missing.length > 0) {
+        setLogs([{ id: '0', step: '00 · CONFIG', text: `Cannot start: missing API keys — ${missing.join(', ')}.`, final: true, error: true }])
+        setRunState('done')
+        return
+      }
+    } catch {
+      setLogs([{ id: '0', step: '00 · CONFIG', text: 'Cannot start: failed to reach the backend — is it running on :8080?', final: true, error: true }])
+      setRunState('done')
+      return
+    }
 
     const params = new URLSearchParams({
       sponsors: [...selectedSponsors].join(','),
@@ -75,6 +110,14 @@ function App() {
     }
   }
 
+  const renderMainContent = () => {
+    if (runState === 'idle') return <EmptyState />
+    if (runState === 'running' || ideas.length === 0) {
+      return <ResearchScreen logs={logs} synergyText={synergyText} />
+    }
+    return <IdeaCards ideas={ideas} onViewLog={showLog ? undefined : () => setShowLog(true)} />
+  }
+
   return (
     <div className="grid grid-cols-[340px_1fr] max-[1100px]:grid-cols-[300px_1fr] h-screen gap-0">
       <Sidebar
@@ -97,11 +140,10 @@ function App() {
         customSponsorUrls={customSponsorUrls}
         addCustomSponsorUrl={addCustomSponsorUrl}
         removeCustomSponsorUrl={removeCustomSponsorUrl}
+        keysConfig={keysConfig}
       />
       <main className="flex flex-col min-h-0 bg-bg-0">
-        {runState === 'idle' && <EmptyState />}
-        {runState === 'running' && <ResearchScreen logs={logs} synergyText={synergyText} />}
-        {runState === 'done' && <IdeaCards ideas={ideas} onViewLog={showLog ? undefined : () => setShowLog(true)} />}
+        {renderMainContent()}
       </main>
       <LogSlideover open={showLog} onClose={() => setShowLog(false)} logs={logs} synergyText={synergyText} />
     </div>

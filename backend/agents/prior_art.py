@@ -5,9 +5,7 @@ import time
 
 from agents import Agent, Runner, function_tool
 
-from ..core.exa_search import exa_search_prior_art, has_exa_key
-from ..core.fallback import fallback_prior_art_summary, has_api_key
-from ..core.mock_search import mock_search_prior_art
+from ..core.exa_search import exa_search_prior_art
 
 log = logging.getLogger(__name__)
 
@@ -38,9 +36,7 @@ Keep the summary under 300 words. Be specific — quote project names and stats 
 
 def search_prior_art(sponsor_name: str, source_type: str) -> str:
     """Search Devpost, X, or GitHub for hackathon prior art for this sponsor."""
-    if has_exa_key():
-        return exa_search_prior_art(sponsor_name, source_type)
-    return mock_search_prior_art(sponsor_name, source_type)
+    return exa_search_prior_art(sponsor_name, source_type)
 
 
 _search_prior_art_tool = function_tool(search_prior_art)
@@ -53,9 +49,6 @@ prior_art_agent = Agent(
 
 
 async def research_prior_art_task(sponsor_name: str, sponsor_profile: str) -> str:
-    if not has_api_key():
-        log.info("prior_art [%s]: no API key — using fallback summary", sponsor_name)
-        return fallback_prior_art_summary(sponsor_name)
     log.info("prior_art [%s]: starting agent (profile: %d chars)", sponsor_name, len(sponsor_profile))
     prompt = (
         f"Sponsor: {sponsor_name}\n\n"
