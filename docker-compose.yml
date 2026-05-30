@@ -3,12 +3,20 @@ services:
     build: ./frontend
     ports:
       - "5173:5173"
+    environment:
+      VITE_API_PROXY_TARGET: http://backend:8080
+    depends_on:
+      - backend
 
   backend:
     build: ./backend
     ports:
       - "8080:8080"
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
     environment:
       CHROMA_HOST: chromadb
       CHROMA_PORT: "8000"

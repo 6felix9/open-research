@@ -52,7 +52,7 @@ Rules:
 - `difficulty`: 1=easy (fits 24h, frontend/backend skills), 2=medium, 3=hard (ML/infra heavy or 48h+).
   Scale difficulty to the team's stated skills and time budget.
 - `priorArt.title` must reference a real-sounding project from the prior-art data provided.
-- `priorArt.meta` should include platform (Devpost / HN / X), year, and one metric (stars, prize, rank).
+- `priorArt.meta` should include platform (Devpost / GitHub), year, and one metric (stars, prize, rank).
 - Ideas must be novel relative to the prior art — don't clone a winning project, find the gap.
 - `why` should cite specific sponsor capabilities that make this idea viable *right now*.
 - `demoMoment` must describe a single, concrete, show-don't-tell moment (30 seconds max).

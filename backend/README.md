@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI backend for Open Research. Exposes a single SSE endpoint that runs a three-phase agentic pipeline — sponsor profiling, prior art scan, and synthesis — streaming results to the frontend as they complete.
+FastAPI backend for Open Research. Exposes a config preflight endpoint plus an SSE endpoint that runs a three-phase agentic pipeline — sponsor profiling, prior art scan, and synthesis — streaming results to the frontend as they complete.
 
 ## Quick Start
 
@@ -13,7 +13,7 @@ pip install -r backend/requirements.txt
 uvicorn backend.main:app --port 8080 --reload
 
 # Full stack with ChromaDB via Docker
-docker-compose up
+docker compose up
 ```
 
 Copy `.env.example` to `.env.local` in the repo root and fill in your keys:
@@ -76,9 +76,9 @@ Returns HTTP 422 if `sponsors` or `theme` are missing, or if any of the five req
 
 ```
 backend/
-├── main.py                  # App entrypoint, loads .env, mounts router
+├── main.py                  # App entrypoint, loads env files, mounts router
 ├── routers/
-│   └── research.py          # GET /api/research/stream + _generate() pipeline
+│   └── research.py          # GET /api/config/keys + GET /api/research/stream
 ├── agents/
 │   ├── sponsor_profiler.py  # Phase 1: SponsorProfiler agent
 │   ├── prior_art.py         # Phase 2: PriorArtResearcher agent + search_prior_art tool
@@ -226,7 +226,7 @@ SynthesisResult  synergy: str, ideas: list[IdeaBrief]
 | `CHROMA_PATH` | No | `backend/chroma_db` | Local persistent ChromaDB path |
 | `SPONSOR_PROFILE_TTL_DAYS` | No | `7` | Sponsor profile cache TTL in days |
 
-Loaded from `.env` and `.env.local` in both `backend/` and the repo root.
+Loaded from `.env` and `.env.local` in the current working directory and one directory up.
 
 ## Error Handling
 

@@ -16,7 +16,7 @@ One agent per sponsor. Each one searches for the sponsor's developer docs, past 
 
 **Phase 2 — Prior Art**
 
-Searches Devpost and social for past winners who used each sponsor. Extracts the pattern: what problem category won, what the technical crux was, what made the judges care. This is the part most people skip and most often regret skipping.
+Searches Devpost and GitHub for past projects that used each sponsor. Extracts the pattern: what problem category won, what the technical crux was, what made judges or the community care. This is the part most people skip and most often regret skipping.
 
 **Phase 3 — Synthesis**
 
@@ -52,9 +52,9 @@ Cross-references your interests and stack against sponsor capabilities and winni
 ┌─────────────────────────────────────────┐
 │    PHASE 2: Prior Art Research          │
 │                                         │
-│  Search Devpost for each sponsor        │
+│  Search Devpost + GitHub per sponsor    │
 │  Extract: problem category, tech used,  │
-│           what made it win              │
+│           judge/community signals       │
 └──────────────────┬──────────────────────┘
                    │
                    ▼
@@ -76,9 +76,9 @@ Cross-references your interests and stack against sponsor capabilities and winni
 | Frontend | React + Vite | Fast dev loop, SSE works cleanly |
 | Backend | FastAPI | Fits the Python agent layer, native async, SSE is first-class |
 | Agents | OpenAI Agents SDK | Parallel agent dispatch, web search built in |
-| Sponsor cache | ChromaDB | Profile embeddings persist across hackathons, enables similarity search |
-| Job state | In-memory / Redis | Session-scoped, doesn't need durability |
-| Infra | Docker on DigitalOcean | Same pattern as existing deployments |
+| Sponsor cache | ChromaDB | Stores reusable sponsor profiles with TTL-based refresh |
+| Job state | Request-local memory | Session-scoped, doesn't need durability |
+| Infra | Docker Compose | Runs frontend, backend, and ChromaDB locally |
 
 ---
 
@@ -106,7 +106,7 @@ Watching the reasoning unfold is part of the value. You see *why* an idea was re
 
 Profiling a sponsor is the most expensive step and the most reusable. Once a sponsor is profiled, the result is stored in ChromaDB with the sponsor name as metadata. The next run that includes the same sponsor skips Phase 1 entirely. Cache invalidation is weekly by default, or on-demand.
 
-Over time this builds a sponsor knowledge base that compounds. Eventually you can query it sideways — "find sponsors similar to Browserbase" — to surface analogous prior art when you're researching a new hackathon with overlapping categories.
+Over time this builds a sponsor knowledge base that compounds by skipping repeat profiling work for sponsors you have already researched. The current cache stores profiles by normalized sponsor name with a placeholder embedding; it is not a semantic similarity index.
 
 ---
 
@@ -114,9 +114,8 @@ Over time this builds a sponsor knowledge base that compounds. Eventually you ca
 
 ```bash
 # Backend
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
+pip install -r backend/requirements.txt
+uvicorn backend.main:app --port 8080 --reload
 
 # Frontend
 cd frontend
@@ -124,10 +123,10 @@ npm install
 npm run dev
 ```
 
-Docker Compose covers both services for full-stack local development:
+Docker Compose covers the frontend, backend, and ChromaDB for full-stack local development:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ---
@@ -139,10 +138,10 @@ open-research/
 ├── backend/
 │   ├── agents/
 │   │   ├── sponsor_profiler.py   # per-sponsor parallel agents
-│   │   ├── prior_art.py          # Devpost + social search
+│   │   ├── prior_art.py          # Devpost + GitHub prior-art search
 │   │   └── synthesizer.py        # cross-ref + brief generation
 │   ├── routers/
-│   │   └── research.py           # SSE endpoint
+│   │   └── research.py           # config preflight + SSE endpoint
 │   └── main.py
 ├── frontend/
 │   └── src/

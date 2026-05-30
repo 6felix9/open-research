@@ -9,7 +9,7 @@ a final `ideas` event with the ranked results.
 Phase flow (sequential, phases 1 & 2 parallel per-sponsor internally):
   01 · INTAKE            — parse and validate input
   02 · SPONSOR LANDSCAPE — profile each sponsor (Phase 1)
-  04 · PRIOR ART SCAN    — scan Devpost/X per sponsor (Phase 2)
+  04 · PRIOR ART SCAN    — scan Devpost/GitHub per sponsor (Phase 2)
   05 · SYNTHESIS         — generate ranked idea briefs (Phase 3)
   06 · COMPLETE          — emit ideas + done
 """
@@ -291,7 +291,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
             {
                 "id": "prior-art-start",
                 "step": "04 · PRIOR ART SCAN",
-                "text": f"Searching Devpost and X for prior art across {len(sponsor_profiles)} sponsor(s).",
+                "text": f"Searching Devpost and GitHub for prior art across {len(sponsor_profiles)} sponsor(s).",
             },
         )
 
@@ -386,18 +386,6 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
 
     yield sse("ideas", ideas_payload)
     yield sse("done", {})
-
-
-@router.get("/config/keys")
-async def get_config_keys():
-    """Return whether each required API key/token is configured in the environment."""
-    return {
-        "OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY")),
-        "EXA_API_KEY": bool(os.getenv("EXA_API_KEY")),
-        "FIRECRAWL_API_KEY": bool(os.getenv("FIRECRAWL_API_KEY")),
-        "JINA_API_KEY": bool(os.getenv("JINA_API_KEY")),
-        "GITHUB_TOKEN": bool(os.getenv("GITHUB_TOKEN")),
-    }
 
 
 @router.get("/research/stream")
