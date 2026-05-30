@@ -20,7 +20,10 @@ Copy `.env.example` to `.env.local` in the repo root and fill in your keys:
 
 ```
 OPENAI_API_KEY=        # required for live agents; omit to run in fallback mode
-FIRECRAWL_API_KEY=     # required for Firecrawl scraping; omits falls back to httpx
+FIRECRAWL_API_KEY=     # Phase 1 sponsor URL scraping; falls back to httpx
+EXA_API_KEY=           # Phase 2 prior art discovery; falls back to mock data
+JINA_API_KEY=          # Phase 2 Devpost scraping; works without key at lower rate limits
+GITHUB_TOKEN=          # Phase 2 GitHub scraping; optional, raises API rate limit
 ```
 
 ## API
@@ -60,15 +63,20 @@ backend/
 │   └── research.py          # GET /api/research/stream + _generate() pipeline
 ├── agents/
 │   ├── sponsor_profiler.py  # Phase 1: SponsorProfiler agent
-│   ├── prior_art.py         # Phase 2: PriorArtResearcher agent
+│   ├── prior_art.py         # Phase 2: PriorArtResearcher agent + search_prior_art tool
 │   └── synthesizer.py       # Phase 3: Synthesizer agent + all Pydantic models
-└── core/
-    ├── cache.py             # ChromaDB sponsor profile cache
-    ├── fetch_urls.py        # Firecrawl / httpx URL scraping utility
-    ├── search.py            # DuckDuckGo search (tool + raw URL helper)
-    ├── stream.py            # SSE serialization helper
-    ├── fallback.py          # Static profiles/ideas for zero-key mode
-    └── mock_search.py       # Deterministic mock prior-art data
+├── core/
+│   ├── cache.py             # ChromaDB sponsor profile cache
+│   ├── exa_search.py        # Exa AI discovery (devpost / x / github)
+│   ├── jina_scraper.py      # Jina Reader scraper for Devpost pages
+│   ├── github_scraper.py    # GitHub REST API scraper (metadata + README)
+│   ├── fetch_urls.py        # Firecrawl / httpx URL scraping (Phase 1)
+│   ├── search.py            # DuckDuckGo search (tool + raw URL helper)
+│   ├── stream.py            # SSE serialization helper
+│   ├── fallback.py          # Static profiles/ideas for zero-key mode
+│   └── mock_search.py       # Mock prior-art data (no-key fallback)
+└── tests/
+    └── test_integrations.py # Integration tests for all scrapers + Exa pipeline
 ```
 
 ## Pipeline Overview
@@ -137,16 +145,39 @@ graph TD
 
 ### Phase 2 — Prior Art Scan
 
-For each sponsor, searches Devpost and X/Twitter for prior hackathon projects and community signals. Runs in parallel across sponsors using the same task-pool pattern as Phase 1.
+For each sponsor, searches Devpost, X/community, and GitHub for prior hackathon projects and signals. Runs in parallel across sponsors using the same task-pool pattern as Phase 1.
 
-Agent: `PriorArtResearcher` — receives sponsor name + first 800 chars of the Phase 1 profile as context. Output: Markdown summary (≤300 words) of winning problem categories, technical patterns, and judge signals.
-
-> **Note:** Real Devpost/X scraping is not yet implemented. The `mock_search_prior_art_tool` returns deterministic mock data. Pipeline diagram TBD.
+Agent: `PriorArtResearcher` — receives sponsor name + first 800 chars of the Phase 1 profile as context. Calls `search_prior_art` three times (devpost, x, github), then synthesises a Markdown summary (≤300 words) covering winning problem categories, technical crux, and judge/community signals.
 
 ```mermaid
-%% Phase 2 — Prior Art Scan pipeline diagram (placeholder)
 graph TD
-    placeholder["TODO: Phase 2 pipeline diagram"]
+    Task["research_prior_art_task\n(sponsor_name, sponsor_profile)"] --> APICheck{"has OPENAI_API_KEY?"}
+    APICheck -- No --> FallbackSummary["fallback_prior_art_summary()\nstatic Markdown"]
+
+    APICheck -- Yes --> Agent["PriorArtResearcher Agent\nOpenAI Agents SDK"]
+
+    Agent -->|"step 1"| ToolDevpost["search_prior_art\nsource_type=devpost"]
+    Agent -->|"step 2"| ToolX["search_prior_art\nsource_type=x"]
+    Agent -->|"step 3"| ToolGithub["search_prior_art\nsource_type=github"]
+
+    ToolDevpost & ToolX & ToolGithub --> ExaCheck{"has EXA_API_KEY?"}
+
+    ExaCheck -- No --> Mock["mock_search_prior_art()\nstatic fixture data"]
+
+    ExaCheck -- "Yes / devpost" --> ExaDevpost["Exa Search\ninclude_domains: devpost.com\nnum_results: 5"]
+    ExaDevpost --> Jina["Jina Reader r.jina.ai\nParallel scrape top 3 URLs\nX-Remove-Selector: nav/header\n6 000 char limit per page"]
+    Jina --> DevpostOut["Title + URL\n+ Full project content\n(Inspiration, How we built,\nChallenges sections)"]
+
+    ExaCheck -- "Yes / x" --> ExaX["Exa Search\nbroad query, no domain filter\nnum_results: 5"]
+    ExaX --> XOut["Title + URL\n+ Exa highlights only\n(winner posts, blog articles)"]
+
+    ExaCheck -- "Yes / github" --> ExaGithub["Exa Search\ninclude_domains: github.com\nnum_results: 5"]
+    ExaGithub --> GithubAPI["GitHub REST API\nGET /repos/owner/repo\nGET /repos/owner/repo/readme\nParallel, top 3 URLs"]
+    GithubAPI --> GithubOut["Title + URL\n+ Stars, forks, language,\ntopics + README excerpt"]
+
+    DevpostOut & XOut & GithubOut & Mock --> Synthesis["Agent synthesises\n3-point Markdown summary ≤300 words\nWinning categories · Tech crux · Judge signals"]
+    FallbackSummary --> PriorArtOut["prior_art_summary str\npassed to Phase 3"]
+    Synthesis --> PriorArtOut
 ```
 
 ### Phase 3 — Synthesis
@@ -181,7 +212,10 @@ SynthesisResult  synergy: str, ideas: list[IdeaBrief]
 | Variable | Required | Default | Notes |
 |---|---|---|---|
 | `OPENAI_API_KEY` | No | — | Absence triggers full fallback mode |
-| `FIRECRAWL_API_KEY` | No | — | Absence falls back to httpx HTML fetch |
+| `FIRECRAWL_API_KEY` | No | — | Phase 1 URL scraping; falls back to httpx |
+| `EXA_API_KEY` | No | — | Phase 2 discovery; falls back to mock data |
+| `JINA_API_KEY` | No | — | Phase 2 Devpost scraping; works without key at lower rate limits |
+| `GITHUB_TOKEN` | No | — | Phase 2 GitHub scraping; raises rate limit from 60 to 5 000 req/hr |
 | `OPENAI_AGENTS_DISABLE_TRACING` | No | — | Set to `"1"` in `main.py` at startup |
 | `CHROMA_HOST` | No | — | If set, uses ChromaDB HTTP server |
 | `CHROMA_PORT` | No | `8000` | Used with `CHROMA_HOST` |
