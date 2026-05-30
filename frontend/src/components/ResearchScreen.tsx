@@ -4,13 +4,13 @@ import LogRow from './LogRow'
 interface ResearchScreenProps {
   logs: LogEntry[]
   synergyText: string
+  runState: 'idle' | 'running' | 'done' | 'error'
 }
 
-export default function ResearchScreen({ logs, synergyText }: ResearchScreenProps) {
-  const lastEntry = logs[logs.length - 1]
-  const isError = logs.length > 0 && lastEntry.error === true
-  const isDone = logs.length > 0 && lastEntry.final === true
-  const progress = isDone ? 100 : Math.min((logs.length / 8) * 90, 90)
+export default function ResearchScreen({ logs, synergyText, runState }: ResearchScreenProps) {
+  const isError = runState === 'error'
+  const isDone = runState === 'done'
+  const progress = (isDone || isError) ? 100 : Math.min((logs.length / 8) * 90, 90)
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -32,7 +32,8 @@ export default function ResearchScreen({ logs, synergyText }: ResearchScreenProp
         <div className="max-w-[780px] mx-auto px-[32px] py-0">
           {logs.map((entry, i) => {
             const isLastEntry = i === logs.length - 1
-            const state = entry.error ? 'error' : isDone ? 'done' : isLastEntry ? 'running' : 'done'
+            const entryState = entry.error ? (entry.final ? 'error' : 'warning') : null
+            const state = entryState ?? ((isDone || isError) ? 'done' : isLastEntry ? 'running' : 'done')
             return (
               <LogRow
                 key={entry.id}

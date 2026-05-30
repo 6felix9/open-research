@@ -243,6 +243,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                         "id": f"{sponsor_name.lower()}-profile-error",
                         "step": "02 · SPONSOR LANDSCAPE",
                         "text": f"{sponsor_name}: sponsor profiler failed ({exc}).",
+                        "error": True,
                     },
                 )
                 continue
@@ -312,6 +313,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                             "id": f"{sponsor_name.lower()}-prior-art-error",
                             "step": "04 · PRIOR ART SCAN",
                             "text": f"{sponsor_name}: prior art scan failed ({exc}). Continuing without it.",
+                            "error": True,
                         },
                     )
                     continue
@@ -363,6 +365,7 @@ async def _generate(sponsors: str, interests: str, theme: str, seed: str, skills
                 "step": "05 · SYNTHESIS",
                 "text": f"Synthesis failed ({exc}). No ideas generated.",
                 "final": True,
+                "error": True,
             },
         )
         yield sse("done", {})

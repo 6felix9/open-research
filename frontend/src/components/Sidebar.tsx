@@ -16,7 +16,7 @@ interface SidebarProps {
   setTimeBudget: (v: string) => void
   depth: number
   setDepth: (v: number) => void
-  runState: 'idle' | 'running' | 'done'
+  runState: 'idle' | 'running' | 'done' | 'error'
   onRun: () => void
   customSponsorUrls: string[]
   addCustomSponsorUrl: (url: string) => void
@@ -232,7 +232,7 @@ export default function Sidebar({
           disabled={runState === 'running' || selectedSponsors.size === 0 || !theme.trim() || !allKeysPresent}
         >
           <span>
-            {runState === 'running' ? 'Researching…' : runState === 'done' ? 'Run again' : 'Research ideas'}
+            {runState === 'running' ? 'Researching…' : (runState === 'done' || runState === 'error') ? 'Run again' : 'Research ideas'}
           </span>
           <span className="font-mono text-[13px] text-amber-theme">→</span>
         </button>

@@ -39,7 +39,7 @@ export default function LogSlideover({ open, onClose, logs, synergyText }: LogSl
           {logs.map(entry => (
             <LogRow
               key={entry.id}
-              state="done"
+              state={entry.error ? (entry.final ? 'error' : 'warning') : 'done'}
               step={entry.step.replace(/^\d+ · /, '')}
               text={entry.quote ? undefined : entry.text}
               quote={entry.quote}

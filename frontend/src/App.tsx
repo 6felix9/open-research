@@ -21,7 +21,7 @@ function App() {
   const [skills, setSkills] = useState(new Set<string>())
   const [timeBudget, setTimeBudget] = useState('36h')
   const [depth, setDepth] = useState(1)
-  const [runState, setRunState] = useState<'idle' | 'running' | 'done'>('idle')
+  const [runState, setRunState] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
   const [showLog, setShowLog] = useState(false)
   const [customSponsorUrls, setCustomSponsorUrls] = useState<string[]>([])
   const [keysConfig, setKeysConfig] = useState<Record<string, boolean> | null>(null)
@@ -65,12 +65,12 @@ function App() {
       const missing = Object.entries(keys).filter(([, ok]) => !ok).map(([k]) => k)
       if (missing.length > 0) {
         setLogs([{ id: '0', step: '00 · CONFIG', text: `Cannot start: missing API keys — ${missing.join(', ')}.`, final: true, error: true }])
-        setRunState('done')
+        setRunState('error')
         return
       }
     } catch {
       setLogs([{ id: '0', step: '00 · CONFIG', text: 'Cannot start: failed to reach the backend — is it running on :8080?', final: true, error: true }])
-      setRunState('done')
+      setRunState('error')
       return
     }
 
@@ -101,21 +101,29 @@ function App() {
 
     es.addEventListener('done', () => {
       es.close()
-      setRunState('done')
+      setLogs(prev => {
+        const hasFatalError = prev.some(l => l.error && l.final)
+        setRunState(hasFatalError ? 'error' : 'done')
+        return prev
+      })
     })
 
     es.onerror = () => {
       es.close()
-      setRunState('idle')
+      setRunState('error')
     }
   }
 
   const renderMainContent = () => {
-    if (runState === 'idle') return <EmptyState />
-    if (runState === 'running' || ideas.length === 0) {
-      return <ResearchScreen logs={logs} synergyText={synergyText} />
+    switch (runState) {
+      case 'idle':
+        return <EmptyState />
+      case 'running':
+      case 'error':
+        return <ResearchScreen logs={logs} synergyText={synergyText} runState={runState} />
+      case 'done':
+        return <IdeaCards ideas={ideas} onViewLog={showLog ? undefined : () => setShowLog(true)} />
     }
-    return <IdeaCards ideas={ideas} onViewLog={showLog ? undefined : () => setShowLog(true)} />
   }
 
   return (

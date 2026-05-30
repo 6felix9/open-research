@@ -1,5 +1,5 @@
 interface LogRowProps {
-  state: 'done' | 'running' | 'idle' | 'error'
+  state: 'done' | 'running' | 'idle' | 'error' | 'warning'
   step: string
   text?: string
   quote?: string
@@ -31,6 +31,8 @@ export default function LogRow({ state, step, text, quote, animate, variant = 'c
             data-[state=error]:bg-[var(--error)] data-[state=error]:border-[var(--error)]
             data-[state=error]:before:content-[''] data-[state=error]:before:absolute data-[state=error]:before:w-[1.5px] data-[state=error]:before:h-[7px] data-[state=error]:before:bg-bg-0 data-[state=error]:before:left-[4px] data-[state=error]:before:top-[1.5px] data-[state=error]:before:rotate-45
             data-[state=error]:after:content-[''] data-[state=error]:after:absolute data-[state=error]:after:w-[1.5px] data-[state=error]:after:h-[7px] data-[state=error]:after:bg-bg-0 data-[state=error]:after:left-[4px] data-[state=error]:after:top-[1.5px] data-[state=error]:after:-rotate-45
+            data-[state=warning]:bg-amber-dim data-[state=warning]:border-amber-dim
+            data-[state=warning]:after:content-['!'] data-[state=warning]:after:absolute data-[state=warning]:after:left-[3px] data-[state=warning]:after:top-[-0.5px] data-[state=warning]:after:text-[8px] data-[state=warning]:after:leading-none data-[state=warning]:after:text-bg-0 data-[state=warning]:after:font-bold
           "
           data-state={state} 
         />
