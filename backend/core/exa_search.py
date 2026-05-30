@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from exa_py import Exa
+
+from .jina_scraper import scrape_url
 
 log = logging.getLogger(__name__)
 
@@ -30,12 +33,26 @@ def exa_search_prior_art(sponsor_name: str, source_type: str) -> str:
     log.debug("exa_search [%s/%s]: query=%r", sponsor_name, source_type, query)
     results = exa.search(query, **kwargs)
 
+    # For Devpost results, enrich the top 3 with full page content via Jina Reader
+    scraped: dict[str, str] = {}
+    if source_type == "devpost" and results.results:
+        urls = [r.url for r in results.results[:3]]
+        log.debug("exa_search [%s/devpost]: scraping %d URLs via Jina", sponsor_name, len(urls))
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = {pool.submit(scrape_url, u): u for u in urls}
+            for fut in as_completed(futures):
+                scraped[futures[fut]] = fut.result()
+
     lines: list[str] = []
     for r in results.results:
         lines.append(f"Title: {r.title}\nURL: {r.url}")
-        highlights = getattr(r, "highlights", None)
-        if highlights:
-            lines.append("Highlights:\n" + "\n".join(f"  - {h}" for h in highlights))
+        content = scraped.get(r.url)
+        if content:
+            lines.append(f"Full content:\n{content}")
+        else:
+            highlights = getattr(r, "highlights", None)
+            if highlights:
+                lines.append("Highlights:\n" + "\n".join(f"  - {h}" for h in highlights))
         lines.append("")
 
     return "\n".join(lines).strip() or "No results found."
