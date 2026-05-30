@@ -2,12 +2,18 @@ from __future__ import annotations
 
 from agents import function_tool
 
-# TODO: Replace _DEVPOST_DATA with a real Devpost scraper.
-#       Suggested approach: scrape devpost.com/hackathons, filter by sponsor tag,
-#       extract project title, description, tech stack, and prize outcome.
-#       Consider using httpx + BeautifulSoup or a headless browser for JS-rendered pages.
+# TODO: Replace mock searches with the new discovery and scraping pipeline:
+#       - Use Exa AI to semantically search for prior art URLs across Devpost, GitHub, and Twitter.
+#       - Once URLs are discovered, route them to individual tools:
+#         * Devpost URLs: Retrieve and scrape using Jina Reader.
+#         * GitHub URLs: Fetch repository metadata/code via the GitHub REST API.
+#         * Twitter (X) URLs: Scrape via Scrapling StealthyFetcher (https://github.com/D4Vinci/Scrapling), mocked for now.
+
+# TODO: Once the discovery and scraping pipeline is fully implemented, remove all the mocked 
+#       hallucinated data structures below (_DEVPOST_DATA, _X_DATA, and associated generic templates).
 
 _DEVPOST_DATA: dict[str, str] = {
+
     "groq": """
 Devpost prior art for Groq:
 
@@ -231,11 +237,10 @@ Devpost prior art for Pinecone:
 """,
 }
 
-# TODO: Replace _X_DATA with a real X/Twitter scraper.
-#       Suggested approach: use the X API v2 (search/recent or full-archive endpoint)
-#       with query "(from:devpost OR #hackathon) {sponsor_name} built winner".
-#       Filter for posts with >50 likes or >10 retweets as a signal of genuine hype.
-#       Respect rate limits — cache results per sponsor per day.
+# TODO: X (Twitter) scraping will remain mocked for now as part of the new discovery pipeline.
+#       When ready, replace this with Scrapling StealthyFetcher (https://github.com/D4Vinci/Scrapling) to bypass Twitter login and rate-limiting blocks.
+
+
 
 _X_DATA: dict[str, str] = {
     "groq": """

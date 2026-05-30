@@ -3,10 +3,11 @@ from __future__ import annotations
 import logging
 import time
 
-from agents import Agent, Runner
+from agents import Agent, Runner, function_tool
 
+from ..core.exa_search import exa_search_prior_art, has_exa_key
 from ..core.fallback import fallback_prior_art_summary, has_api_key
-from ..core.mock_search import mock_search_prior_art_tool
+from ..core.mock_search import mock_search_prior_art
 
 log = logging.getLogger(__name__)
 
@@ -16,8 +17,8 @@ You are a hackathon prior-art analyst. Given a sponsor name and their developer 
 search both Devpost and X (Twitter) for past hackathon projects that used this sponsor.
 
 Steps:
-1. Call mock_search_prior_art with source_type="devpost" to get Devpost project listings.
-2. Call mock_search_prior_art with source_type="x" to get X/Twitter posts and hype signals.
+1. Call search_prior_art with source_type="devpost" to get Devpost project listings.
+2. Call search_prior_art with source_type="x" to get X/Twitter posts and hype signals.
 3. Synthesize a concise Markdown summary covering exactly these three points:
 
    **Winning problem categories** — What real-world problems do winning projects solve?
@@ -28,10 +29,24 @@ Keep the summary under 300 words. Be specific — quote project names and stats 
 """
 
 
+# TODO: Implement scraping phase:
+#       - Devpost URLs -> Scrape content using Jina Reader.
+#       - GitHub URLs -> Retrieve repository metadata and code files using the GitHub REST API.
+#       - Twitter (X) URLs -> Scrape posts/hype signals using Scrapling StealthyFetcher (https://github.com/D4Vinci/Scrapling).
+
+def search_prior_art(sponsor_name: str, source_type: str) -> str:
+    """Search Devpost or X for hackathon prior art for this sponsor."""
+    if has_exa_key():
+        return exa_search_prior_art(sponsor_name, source_type)
+    return mock_search_prior_art(sponsor_name, source_type)
+
+
+_search_prior_art_tool = function_tool(search_prior_art)
+
 prior_art_agent = Agent(
     name="PriorArtResearcher",
     instructions=INSTRUCTIONS,
-    tools=[mock_search_prior_art_tool],
+    tools=[_search_prior_art_tool],
 )
 
 
