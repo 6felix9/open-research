@@ -61,7 +61,7 @@ export default function Sidebar({
         </div>
       </div>
 
-      <div className="overflow-y-auto pt-[18px] px-[20px] pb-[12px] flex flex-col gap-[22px] min-h-0 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[3px]">
+      <div className="overflow-y-auto pt-[18px] px-[20px] pb-[12px] flex flex-col gap-[22px] min-h-0 [scrollbar-gutter:stable] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-line-1 [&::-webkit-scrollbar-thumb]:rounded-[3px]">
         <div className="flex flex-col gap-[10px]">
           <div className="flex items-baseline justify-between gap-[8px]">
             <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3">Sponsors <span className="text-amber-theme normal-case tracking-normal">*</span></div>

@@ -4,7 +4,6 @@
 .antigravitycli/
 skills-lock.json
 CLAUDE.md
-AGENTS.local.md
 
 # Dependencies
 node_modules/
