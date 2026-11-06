@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import logging
+import os
 import time
 from typing import Literal
 
-from agents import Agent, Runner
+from openai import AsyncOpenAI
 from pydantic import BaseModel
 
 log = logging.getLogger(__name__)
+
+MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
 
 
 class Breakdown(BaseModel):
@@ -19,7 +22,7 @@ class Breakdown(BaseModel):
 class PriorArtRef(BaseModel):
     title: str
     meta: str
-    url: str = "#"
+    url: str
 
 
 class IdeaBrief(BaseModel):
@@ -43,55 +46,45 @@ class SynthesisResult(BaseModel):
 
 INSTRUCTIONS = """
 You are a hackathon idea synthesizer. Given user preferences, sponsor profiles, and prior-art
-summaries, generate 5–8 original hackathon idea briefs ranked by match score.
+entries, generate 5–8 original hackathon idea briefs ranked by match score.
 
 Rules:
 - `stack` must only contain sponsor IDs from the provided sponsor list (lowercase).
-- `breakdown.sponsor + breakdown.interest + breakdown.novelty` must equal `match` exactly.
-- `match` range: 65–95. Order ideas from highest to lowest.
+- `breakdown` ranges: sponsor fit 25–40, interest fit 20–30, novelty 20–25. Set `match` to their sum,
+  so `match` always lands between 65 and 95. Use the full range to separate strong ideas from weak ones.
+  Order ideas from highest to lowest `match`.
 - `difficulty`: 1=easy (fits 24h, frontend/backend skills), 2=medium, 3=hard (ML/infra heavy or 48h+).
   Scale difficulty to the team's stated skills and time budget.
-- `priorArt.title` must reference a real-sounding project from the prior-art data provided.
-- `priorArt.meta` should include platform (Devpost / GitHub), year, and one metric (stars, prize, rank).
+- `priorArt` must be copied verbatim (title, meta, url) from one entry in the PRIOR ART lists.
+  Pick the entry closest to the idea. Never invent a project.
 - Ideas must be novel relative to the prior art — don't clone a winning project, find the gap.
-- `why` should cite specific sponsor capabilities that make this idea viable *right now*.
+- `why` should cite specific sponsor capabilities from the profiles that make this idea viable *right now*.
 - `demoMoment` must describe a single, concrete, show-don't-tell moment (30 seconds max).
 - `synergy` is 1–2 sentences describing the most interesting sponsor combination across the ideas.
-- `id` values: "i1", "i2", … in match-score order.
+- `id` values: "i1", "i2", … in match order.
 """
 
 
-synthesizer_agent = Agent(
-    name="Synthesizer",
-    instructions=INSTRUCTIONS,
-    output_type=SynthesisResult,
-)
-
-
-async def synthesize_task(
+def _build_prompt(
     sponsors: list[str],
     interests: list[str],
     theme: str,
     seed: str,
     skills: list[str],
     time_budget: str,
-    sponsor_profiles: dict[str, str],
-    prior_art_summaries: dict[str, str],
-) -> SynthesisResult:
-    log.info(
-        "synthesizer: starting (sponsors=%s, interests=%s, theme=%r, seed=%r, skills=%s, budget=%s, profiles=%d, prior_art=%d)",
-        sponsors, interests, theme or "none", seed or "none", skills, time_budget or "unset",
-        len(sponsor_profiles), len(prior_art_summaries),
-    )
-    profiles_block = "\n\n".join(
-        f"### {name}\n{text[:600]}" for name, text in sponsor_profiles.items()
-    ) or "No sponsor profiles available."
+    corpus: dict[str, dict],
+    custom_docs: str,
+) -> str:
+    context = []
+    for sponsor_id, snap in corpus.items():
+        lines = [f"### {snap['name']} (id: {sponsor_id}, snapshot {snap['updated']})", snap["profile"], "", "PRIOR ART:"]
+        for p in snap["prior_art"]:
+            lines.append(f"- {p['title']} | {p['meta']} | {p['url']}\n  {p['excerpt']}")
+        context.append("\n".join(lines))
+    if custom_docs:
+        context.append(f"### User-supplied docs\n{custom_docs}")
 
-    prior_art_block = "\n\n".join(
-        f"### {name} prior art\n{text}" for name, text in prior_art_summaries.items()
-    ) or "No prior-art data available."
-
-    prompt = f"""
+    return f"""
 USER BRIEF
 ----------
 Sponsors (use only these IDs in stack): {', '.join(sponsors) or 'none'}
@@ -101,20 +94,60 @@ Seed idea / constraint: {seed or 'none'}
 Team skills: {', '.join(skills) or 'not specified'}
 Time budget: {time_budget or 'not specified'}
 
-SPONSOR PROFILES
+SPONSOR RESEARCH
 ----------------
-{profiles_block}
-
-PRIOR ART SUMMARIES
--------------------
-{prior_art_block}
+{chr(10).join(context) or 'No research data available.'}
 
 Generate 5–8 original hackathon ideas following the output schema.
 """
+
+
+def _finalize(result: SynthesisResult, corpus: dict[str, dict]) -> SynthesisResult:
+    """Make the model's output trustworthy where code can: citations, scores, order, ids."""
+    refs = {
+        p["url"]: PriorArtRef(title=p["title"], meta=p["meta"], url=p["url"])
+        for snap in corpus.values()
+        for p in snap["prior_art"]
+    }
+    for idea in result.ideas:
+        ref = refs.get(idea.priorArt.url)
+        if ref:
+            idea.priorArt = ref
+        else:
+            log.warning("synthesizer: %r cited a prior-art url not in the corpus", idea.title)
+            idea.priorArt.url = "#"
+        b = idea.breakdown
+        idea.match = min(100, b.sponsor + b.interest + b.novelty)
+    result.ideas.sort(key=lambda i: -i.match)
+    for n, idea in enumerate(result.ideas, 1):
+        idea.id = f"i{n}"
+    return result
+
+
+async def synthesize_task(
+    *,
+    api_key: str,
+    sponsors: list[str],
+    interests: list[str],
+    theme: str,
+    seed: str,
+    skills: list[str],
+    time_budget: str,
+    corpus: dict[str, dict],
+    custom_docs: str,
+) -> SynthesisResult:
+    log.info("synthesizer: starting (sponsors=%s, corpus=%d, custom_docs=%d chars)", sponsors, len(corpus), len(custom_docs))
+    prompt = _build_prompt(sponsors, interests, theme, seed, skills, time_budget, corpus, custom_docs)
+    client = AsyncOpenAI(api_key=api_key)
     t0 = time.perf_counter()
-    result = await Runner.run(synthesizer_agent, prompt)
-    synthesis = result.final_output
-    log.info("synthesizer: done in %.1fs (%d ideas)", time.perf_counter() - t0, len(synthesis.ideas))
-    for idea in synthesis.ideas:
-        log.info("  → [%d] %s  (difficulty=%d, stack=%s)", idea.match, idea.title, idea.difficulty, idea.stack)
-    return synthesis
+    completion = await client.chat.completions.parse(
+        model=MODEL,
+        messages=[{"role": "system", "content": INSTRUCTIONS}, {"role": "user", "content": prompt}],
+        response_format=SynthesisResult,
+    )
+    message = completion.choices[0].message
+    if message.parsed is None:
+        raise RuntimeError(message.refusal or "model returned no structured output")
+    result = _finalize(message.parsed, corpus)
+    log.info("synthesizer: done in %.1fs (%d ideas)", time.perf_counter() - t0, len(result.ideas))
+    return result

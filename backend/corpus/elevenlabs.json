@@ -1,0 +1,65 @@
+{
+  "id": "elevenlabs",
+  "name": "ElevenLabs",
+  "updated": "2026-11-07",
+  "docs_url": "https://elevenlabs.io/docs/overview/intro",
+  "profile": "## ElevenLabs for Hackathon Builders\n\n**ElevenLabs** provides AI voice infrastructure for **text-to-speech, speech-to-text, voice cloning, voice agents, and generative audio**.\n\n### Capabilities and APIs you can use in a weekend\n- **ElevenAPI**: REST API plus official **Python** and **TypeScript** SDKs for embedding voice into apps.\n- **Text-to-speech**: generate MP3 audio from text in a single request.\n- **Speech-to-text**: transcribe audio, including **realtime streaming transcripts**.\n- **Voice cloning**: clone a voice from an audio recording, or generate one from a text description.\n- **Voice agents**: combine speech recognition, an LLM, text-to-speech, and turn-taking into a single agent.\n- **Deployment options**: use a no-code browser app (**ElevenCreative**), a visual/programmatic agent platform (**ElevenAgents**), or a ready-made AI phone receptionist (**Reception.ai**).\n\n### Hero use cases the docs showcase\n- **Customer support**: agents that answer questions from your docs via a knowledge base.\n- **Phone lines**: inbound/outbound calling through **Twilio** integration or SIP trunking.\n- **Outbound campaigns**: make many calls at once with batch calling.\n- **Web/app voice experiences**: embed voice and text agents in websites and apps via a widget.\n- **Creative audio production**: voiceovers, music, dubs, and studio projects in the browser.\n\n### What it rewards in hackathon projects\nThe docs don’t list hackathon prizes or formal judge criteria, but they strongly signal value in projects that demonstrate:\n- **Real-time voice experiences**\n- **Practical agent workflows** (support, calling, booking, operations)\n- **Production readiness** such as low latency and scalability\n- **Multilingual or expressive audio**\n- **Voice cloning / personalized voices**\n- **Clear use of their agent stack**: knowledge base, widget, Twilio/SIP, batch calling\n\n### Recent or notable features worth building on now\n- **Eleven v4 Turbo**: real-time speech synthesis with median latency around **100ms**.\n- **Eleven Flash v2.5**: lower-cost TTS with similar fast latency and support for larger outputs.\n- **Scribe v2 Realtime**: streaming transcription with about **150ms** median latency.\n- **90+ language support** across key models.\n- **Native Twilio integration** for phone agents.\n- **Widget** for adding voice + text agents to websites/apps.\n- **CLI onboarding**: the docs note you can get set up via `npx -y @elevenlabs/cli@latest onboard init`.",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "History Alive!",
+      "url": "https://devpost.com/software/history-alive",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "SASSY",
+      "url": "https://devpost.com/software/sof-ia",
+      "meta": "Devpost",
+      "excerpt": "## About the Project ### Inspiration As founders, we’ve experienced firsthand the chaos of managing endless meetings, emails, and tasks. We realized this is a universal problem for professionals and startups alike. That’s why we built **Sassy**, a 24/7 AI-powered assistant designed to **automate the mundane** and let you focus on what really matters. Everything you see here was built from scratch during the ElevenLabs Hackathon, using only widely available open-source technologies and public APIs. ### What it does Sassy is your **virtual executive assistant** that integrates with **Google Calendar** to manage your schedule and **Google Docs** to automatically create professional presentations. You can also talk to Sassy directly via the web using **LiveKit**, which powers real-time, natural voice interactions. We’re currently working on integrating **WhatsApp**, so users can send voice n"
+    },
+    {
+      "source": "devpost",
+      "title": "RoadMate",
+      "url": "https://devpost.com/software/roadmate-t28eqk",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Every year, drowsy driving causes over 100,000 crashes globally, claiming 10,000-30,000 lives - a silent epidemic that strikes without warning. In the age of long commutes and late-night drives, we're all vulnerable to those dangerous moments when our eyes get heavy and our focus drifts. Despite modern vehicles having dozens of sensors and safety features, they can't meaningfully engage with the driver or understand the subtle signs of fatigue that precede an accident. Our inspiration came from a personal experience: A friend of ours dozed off and totaled his car a couple of weeks ago, fortunately he was unscathed. We realized that existing solutions - like basic alarm systems or periodic alerts - are not enough to address the core problem. Drivers need an intelligent companion that can actively monitor, engage, and intervene before fatigue becomes fatal. Road Mate AI tran"
+    },
+    {
+      "source": "devpost",
+      "title": "3 Chapters",
+      "url": "https://devpost.com/software/3-chapters",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "github",
+      "title": "Ridwannurudeen/hermes-genesis",
+      "url": "https://github.com/Ridwannurudeen/hermes-genesis",
+      "meta": "GitHub · 41★ · TypeScript",
+      "excerpt": "Autonomous fiction engine — three agents publish a fictional Wikipedia. Hermes-4-70B (canon + critics) + Kimi-K2.6 (prose) + FLUX + ElevenLabs. Constructed-language phonological drift across eras. <div align=\"center\"> # Hermes Genesis ### A wikipedia for a world that doesn't exist An autonomous fiction engine. One sentence in, a self-writing canon out — three AI agents publish a fictional Wikipedia, illustrate it, narrate it, and let the language drift across centuries. The civilization keeps publishing whether anyone's watching. [![Live](https://img.shields.io/badge/Live-hermesgenesis.world-B"
+    },
+    {
+      "source": "github",
+      "title": "seehiong/voicedoc-agent",
+      "url": "https://github.com/seehiong/voicedoc-agent",
+      "meta": "GitHub · 34★ · TypeScript",
+      "excerpt": "🎙️ Voice-native document intelligence using Gemini, ElevenLabs STT/TTS, and Datadog observability — turning text documents into spoken conversations. # 🎙️ VoiceDoc Agent **Voice‑native document intelligence powered by Google Cloud, ElevenLabs, & Datadog** VoiceDoc Agent transforms static documents into *living conversations*. Built on **Google Cloud’s partner ecosystem**, the agent enables users to upload text-based documents and interact with them entirely through speech. Using **Gemini on Vertex AI** for reasoning and **ElevenLabs Agents** for expressive, real-time voice, VoiceDoc STT & TTS"
+    },
+    {
+      "source": "github",
+      "title": "Shankar-105/knowl",
+      "url": "https://github.com/Shankar-105/knowl",
+      "meta": "GitHub · 26★ · TypeScript",
+      "excerpt": "Build, share, and talk to autonomous Voice Agents powered by Vapi & ElevenLabs. (Built as a part of Vibe Coding Hackathon) <div align=\"center\"> <br /> <img src=\"public/readme/readme-hero-new.webp\" alt=\"Project Banner\"> <br /> <div> <img src=\"https://img.shields.io/badge/-Next.js_16-000000?style=for-the-badge&logo=Next.js&logoColor=white\" /> <img src=\"https://img.shields.io/badge/-React_19-61DAFB?style=for-the-badge&logo=React&logoColor=black\" /> <img src=\"https://img.shields.io/badge/-Vapi-62F6B5?style=for-the-badge&logo=Vapi&logoColor=black\" /> <img src=\"https://img.shields.io/badge/-ElevenLa"
+    },
+    {
+      "source": "github",
+      "title": "IdkwhatImD0ing/AdaptEd",
+      "url": "https://github.com/IdkwhatImD0ing/AdaptEd",
+      "meta": "GitHub · 20★ · Jupyter Notebook",
+      "excerpt": "Lectures that talk back. AI tutor with real-time voice conversation, dynamic Gemini-driven slides, and emotion-aware pacing — built at LA Hacks 2024 (Google Gemini Challenge 1st + Fetch.ai Agentified). <!-- AdaptEd · README · v.2026 ----------------------------------------------- --> <div align=\"center\"> <picture> <source media=\"(prefers-color-scheme: dark)\" srcset=\".github/assets/hero.svg\" /> <source media=\"(prefers-color-scheme: light)\" srcset=\".github/assets/hero.svg\" /> <img alt=\"AdaptEd — Lectures that talk back\" src=\".github/assets/hero.svg\" width=\"100%\" /> </picture> <br/> <p> <a href=\""
+    }
+  ]
+}

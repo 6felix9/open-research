@@ -1,0 +1,65 @@
+{
+  "id": "vercel",
+  "name": "Vercel",
+  "updated": "2026-11-07",
+  "docs_url": "https://vercel.com/docs",
+  "profile": "```markdown\n## Vercel — Hackathon Builder Profile\n\n**What builders can use in a weekend**\n- **AI Gateway**: call 400+ models through one endpoint with budgets, fallbacks, request traces, and usage monitoring.\n- **AI SDK**: build chat, agents, and structured output in TypeScript with streaming and tool calling across React, Next.js, Vue, Svelte, and Node.js.\n- **Workflows**: build durable, observable apps and AI agents on a managed platform; recent SDK updates include **idempotent starts**.\n- **Sandbox**: run untrusted or agent-generated code in isolated, ephemeral environments.\n- **MCP servers**: expose your APIs/systems as tools for agents.\n- **Functions, Background Workers, Queues, Schedules, Daemons**: useful for backend logic, async jobs, cron-like tasks, and long-running services.\n- **Storage, Domains, CDN, Deployments, CLI, Git/CI**: ship and scale a production app quickly.\n- **Observability, Feature Flags, Firewall, Bot Management, Deployment Protection**: production controls for monitoring and safety.\n\n**Hero use cases Vercel showcases**\n- Shipping **AI apps**, especially chat apps, agents, and structured-output experiences.\n- Running **agents and backends** with durable workflows, workers, queues, and schedules.\n- Building and deploying **MCP servers** so agents can call external tools.\n- Managing the full lifecycle of apps: deploy, observe, secure, and scale.\n- Letting coding agents manage projects/deployments/logs via **Vercel MCP**, plugins, and agent skills.\n\n**What it rewards / judge signals hinted by the docs**\n- The docs emphasize **production readiness**: observability, rollback, deployment protection, firewall, bot protection, and compliance.\n- They also highlight **durability** and **operability** for agents: workflows, queues, schedules, observability, and idempotent starts.\n- Strong projects likely show **real AI utility**, not just demos: tool calling, structured outputs, model routing, and integration with external systems.\n\n**Recent or notable features to build on now**\n- **Token Pass** with automatic credit application across AI Gateway usage.\n- **Vercel Schedules** in public beta for cron or one-time dispatches to Functions or Queues.\n- **Gemini Omni 1.2 Flash** available on AI Gateway.\n- **Workflow SDK idempotent starts** for safer retried/duplicate hooks.\n- **Vercel Connect** for short-lived access to services like Slack, GitHub, Microsoft, and Snowflake without storing provider secrets.\n- **Claim Deployments** for deploying on behalf of users and transferring ownership.\n```",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Docflow",
+      "url": "https://devpost.com/software/docflow-y9tor8",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration As developers, we spend 50% of our time reading documentation. But when we get stuck, the workflow is broken: we have to leave the docs, go to Discord or StackOverflow, paste a link, and explain the context. By the time we get an answer, we've lost our flow. We asked: _Why can't the documentation itself be the community?_ Inspired by the seamless collaboration in Google Docs and Notion, we wanted to bring that same \"highlight-to-discuss\" experience to every static documentation site on the web. ## What it does **DocFlow** is an embeddable widget that turns static text into a living conversation. 1. **Contextual Discussion:** Users can highlight any paragraph or code snippet on a page. 2. **Instant Threads:** This creates a unique thread in **Foru.ms** linked specifically to that text element. 3. **AI Assistance:** An integrated AI agent reads the highlighted context and im"
+    },
+    {
+      "source": "devpost",
+      "title": "ethical_hackathon",
+      "url": "https://devpost.com/software/ethical_hackathon",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "Algo AMM",
+      "url": "https://devpost.com/software/algo-amm",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "AI-Realtime-Doubt-Solver-Avatars",
+      "url": "https://devpost.com/software/ai-realtime-doubt-solver-avatars",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Every student has faced that frustrating moment: stuck on a concept late at night with no teacher around to help. Googling doesn’t always make sense, and scrolling through forums just adds confusion. We wanted to create something that feels as natural as turning to your favorite teacher for help — anytime, anywhere. That’s where the idea of AI-powered, real-time teaching avatars was born. ## What it does * Our platform allows students to ask doubts in real-time and instantly get answers explained by lifelike AI avatars of teachers. * Students can type or speak their question. * An AI avatar appears on screen — expressive, interactive, and natural. * The avatar breaks down the concept step by step, adapting the explanation based on follow-up questions. * It feels less like chatting with a chatbot and more like having your personal teacher sitting right beside you. ## How we"
+    },
+    {
+      "source": "github",
+      "title": "liyasthomas/ebb",
+      "url": "https://github.com/liyasthomas/ebb",
+      "meta": "GitHub · 89★ · Vue",
+      "excerpt": "🌊 Feel life again from a new perspective. https://ebb.vercel.app <p align=\"center\"> <img src=\"https://image.flaticon.com/icons/svg/947/947089.svg\" width=\"128\"> <br /> <h1 align=\"center\">ebb</h1> <h3 align=\"center\"> [![contributions welcome](https://img.shields.io/badge/contributions-welcome-34cdfa)](CODE_OF_CONDUCT.md) </h3> </p> <p align=\"center\"> <i>Feel life again from a new perspective.</i> </p> ## **Manifesto** \"Nothing can bring you peace but yourself.\" _— Ralph Waldo Emerson_ ## **What is ebb?** ebb is a web app that gamifies stress/anxiety/depression management in an actionable manner"
+    },
+    {
+      "source": "github",
+      "title": "nandorojo/you2txt",
+      "url": "https://github.com/nandorojo/you2txt",
+      "meta": "GitHub · 78★ · TypeScript",
+      "excerpt": "Turn any YouTube video into a txt file for your LLM training. First place in the NVIDIA + Vercel Hackathon 🥇. # You2Txt <img src=\"https://you2txt.com/og.png\" style=\"aspect-ratio:1.985\"></img> I built You2Txt for the Vercel + Nvidia 2-hour hackathon. It turns any YouTube video into a transcribed `.txt` file. [**This project won first place in the hackathon 🏆**](https://x.com/FernandoTheRojo/status/1859848547316924465) It's hosted at [you2txt.com](https://you2txt.com). However, YouTube has been rate limiting requests coming from the lambda, so if you want to use it, you'll have more luck running"
+    },
+    {
+      "source": "github",
+      "title": "pheralb/project-hackathon",
+      "url": "https://github.com/pheralb/project-hackathon",
+      "meta": "GitHub · 59★ · TypeScript",
+      "excerpt": "🌻 An open-source hackathon management. Hackafor February 2023. <div align=\"center\"> <a href=\"https://phck.vercel.app/\"> <img src=\"public/images/screenshot.png\"> </a> </div> <p></p> <div align=\"center\"> <a href=\"#-getting-started\"> Getting Started </a> <span>&nbsp;❖&nbsp;</span> <a href=\"#-team\"> Team </a> <span>&nbsp;❖&nbsp;</span> <a href=\"#-overview\"> Overview </a> <span>&nbsp;❖&nbsp;</span> <a href=\"#-features\"> Features </a> <span>&nbsp;❖&nbsp;</span> <a href=\"#%EF%B8%8F-stack\"> Stack </a> <span>&nbsp;❖&nbsp;</span> <a href=\"https://phck.vercel.app\" target=\"_blank\"> Deploy ↗︎ </a> </div> <"
+    },
+    {
+      "source": "github",
+      "title": "huseynovvusal/blamebot",
+      "url": "https://github.com/huseynovvusal/blamebot",
+      "meta": "GitHub · 42★ · TypeScript",
+      "excerpt": "AI on-call agent that detects deploy failures explains what broke pages the responsible team and rolls back automatically. # BlameBot — AI-Powered Incident Intelligence ![BlameBot](./assets/image.png) > **Vercel Zero to Agent Hackathon submission** · Solo · Deployed on Vercel [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Deployed on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?logo=vercel)](https://blamebot.vercel.app) [![Built with Next.js](https://img.shields.io/badge/Built_with-Next.js-black?logo=next.js)](htt"
+    }
+  ]
+}

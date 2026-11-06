@@ -1,0 +1,65 @@
+{
+  "id": "anthropic",
+  "name": "Anthropic",
+  "updated": "2026-11-07",
+  "docs_url": "https://docs.claude.com/en/docs/intro",
+  "profile": "# Anthropic (Claude) — Hackathon Builder Profile\n\n## Capabilities and APIs you can use in a weekend\n- **Messages API**: direct model prompting for custom agent loops and fine-grained control.\n- **Claude Managed Agents**: pre-built agent harness for **long-running tasks** and **asynchronous work**.\n- **Core model features**: text + image input, text output, multilingual support, vision, and tool use.\n- **Useful build primitives**: structured outputs, streaming messages, batch processing, citations, embeddings, prompt caching, context editing, message threads, compaction, and files/PDF support.\n- **Tooling**: web search/fetch, code execution, bash, browser/computer use, memory, text editor, MCP connectors/remote MCP servers, and skills.\n\n## Hero use cases the docs showcase\n- **Research** and **knowledge work**\n- **Coding** and **agentic coding**\n- **Long-horizon agentic tasks**\n- **Writing**\n- **Classification, extraction, and routing** for high-volume/low-latency workflows\n- General **analysis** and **reasoning**\n\n## What it rewards in hackathon projects\nThe docs don’t describe hackathon judging criteria, but they strongly emphasize:\n- **Good model selection** for the workload\n- **Agentic workflows** with tool use and orchestration\n- **Long-running, async experiences**\n- **Structured outputs** and **citations** for reliability\n- Efficient use of **context management** and **prompt caching**\n- Handling **stop reasons**, **refusals**, and fallback paths gracefully\n\n## Recent or notable features worth building on now\n- **Latest model lineup**:\n  - **Fable 5.1**: most capable; built for **research** and **multi-day tasks**\n  - **Opus 5.5**: for **complex projects**, **agents**, and **coding**\n  - **Sonnet 5.5**: balanced speed/intelligence for everyday tasks\n  - **Haiku 5.5**: fastest and lowest cost for high-volume tasks\n- **All current models** support text/image input, multilingual capability, vision, and tool use.\n- The docs highlight **effort**, **fast mode**, **task budgets (beta)**, and **streaming refusals** as notable controls/features for production-like behavior.",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Food for thought",
+      "url": "https://devpost.com/software/food-for-thought-3i6lw0",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "Drift",
+      "url": "https://devpost.com/software/drift-wiz4vh",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Through cold DMs, LinkedIn, and founder networks, we reached out to several Large Language Model (LLM) startup founders. We found a shared issue: there was no extremely extremely easy solution for monitoring their LLM in real-life applications. Most founders didn't find existing LLM monitoring solutions braindead easy to set up and were still sifting through chat logs and making manual adjustments every day. Our simple goal was to reduce this wasted time by create an extremely simple solution focused on significantly reducing manual monitoring time. ## What it does Drift is a library that wraps around standard OpenAI/Anthropic LLM calls. It allows users to compare LLM responses with custom-defined target phrases. Drift sends a product's LLM data (user prompt, LLM response, and embedding value) to our internal system for further analysis. Users can access this data via fron"
+    },
+    {
+      "source": "devpost",
+      "title": "TestudoSync",
+      "url": "https://devpost.com/software/testudo-calendar",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Every semester, UMD students waste 30+ minutes manually entering class schedules into their calendars. We thought: there has to be a better way. One click should be enough. ## What it does A browser extension that scrapes your Testudo schedule and instantly converts it to a downloadable ICS calendar file. Works with Google Calendar, Apple Calendar, Outlook—anywhere, for the entire schedule. ## How we built it Pure JavaScript browser extension with DOM scraping, ICS format generation, and Chrome APIs. We built a text-based fallback parser for Testudo's Angular interface, added comprehensive error handling, and created a standalone HTML version as backup. Built and deployed in under 45 minutes. ## Challenges we ran into Testudo's Angular-based interface was tricky—dynamic content loading and inconsistent class names made DOM scraping unpredictable. Each course has multiple m"
+    },
+    {
+      "source": "devpost",
+      "title": "MedScribe AI",
+      "url": "https://devpost.com/software/medscribe-ai",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "github",
+      "title": "affaan-m/agentshield",
+      "url": "https://github.com/affaan-m/agentshield",
+      "meta": "GitHub · 1369★ · TypeScript",
+      "excerpt": "AI agent security scanner. Detect vulnerabilities in agent configurations, MCP servers, and tool permissions. Available as CLI, GitHub Action, ECC plugin, and GitHub App integration. 🛡️ <div align=\"center\"> <img src=\"./assets/agentshield-logo.png\" alt=\"AgentShield\" width=\"180\" /> # AgentShield **Security auditor for AI agent configurations** Scans Claude Code setups for hardcoded secrets, permission misconfigs,<br/> hook injection, MCP server risks, and agent prompt injection vectors.<br/> Available as CLI, GitHub Action, and [GitHub App](https://github.com/apps/ecc-tools) integration. [![npm"
+    },
+    {
+      "source": "github",
+      "title": "barun-saha/slide-deck-ai",
+      "url": "https://github.com/barun-saha/slide-deck-ai",
+      "meta": "GitHub · 378★ · Python",
+      "excerpt": "Co-create PowerPoint slide decks with AI --- title: SlideDeck AI emoji: 🏢 colorFrom: yellow colorTo: green sdk: streamlit sdk_version: 1.65.0 app_file: app.py pinned: false license: mit --- [![PyPI](https://img.shields.io/pypi/v/slidedeckai.svg)](https://pypi.org/project/slidedeckai/) [![codecov](https://codecov.io/gh/barun-saha/slide-deck-ai/branch/main/graph/badge.svg)](https://codecov.io/gh/barun-saha/slide-deck-ai) [![Documentation Status](https://readthedocs.org/projects/slidedeckai/badge/?version=latest)](https://slidedeckai.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https:"
+    },
+    {
+      "source": "github",
+      "title": "ilhamfp/pasal",
+      "url": "https://github.com/ilhamfp/pasal",
+      "meta": "GitHub · 286★ · TypeScript",
+      "excerpt": "Pasal.id - The first open, AI-native Indonesian legal platform. MCP server + REST API + web app giving AI grounded access Indonesian laws. <p align=\"center\"> <picture> <source media=\"(prefers-color-scheme: dark)\" srcset=\"logo/lockup-dark-bg.svg\" /> <img src=\"logo/lockup-primary.svg\" alt=\"Pasal.id\" height=\"64\" /> </picture> </p> <h3 align=\"center\">The First Open, AI-Native Platform for Indonesian Law</h3> <p align=\"center\"> <a href=\"https://www.loom.com/share/da211318bbe14c4396840b97f5ab8603\">Demo Video</a> · <a href=\"https://pasal.id\">Website</a> · <a href=\"https://pasal.id/connect\">Connect to"
+    },
+    {
+      "source": "github",
+      "title": "Junkz3/wrench-board",
+      "url": "https://github.com/Junkz3/wrench-board",
+      "meta": "GitHub · 258★ · Python",
+      "excerpt": "A senior microsoldering technician, available to every repair shop from the seasoned pro to the apprentice. Powered by Claude Opus 5 <p align=\"center\"> <img src=\"docs/assets/wrench-mascot.svg\" alt=\"Wrench Board mascot\" width=\"160\" /> </p> <p align=\"center\"> <strong>English</strong> · <a href=\"README.fr.md\">Français</a> · <a href=\"README.zh.md\">中文</a> · <a href=\"README.hi.md\">हिन्दी</a> </p> # Wrench Board <p align=\"center\"> <a href=\"https://github.com/Junkz3/wrench-board/stargazers\"><img src=\"https://img.shields.io/github/stars/Junkz3/wrench-board?style=flat&color=63d1de\" alt=\"GitHub stars\"></"
+    }
+  ]
+}

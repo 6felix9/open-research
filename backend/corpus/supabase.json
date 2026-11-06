@@ -1,0 +1,65 @@
+{
+  "id": "supabase",
+  "name": "Supabase",
+  "updated": "2026-11-07",
+  "docs_url": "https://supabase.com/docs",
+  "profile": "## Supabase — Hackathon Builder Profile\n\n**Supabase** is a backend platform for shipping full-stack apps fast, with a strong fit for web and mobile prototypes.\n\n### Capabilities and APIs you can use in a weekend\n- **Postgres database** with Realtime, backups, and extensions\n- **Auth** for email/password, passwordless, OAuth, and mobile logins\n- **Storage** for serving and transforming files, integrated with Postgres and Row Level Security policies\n- **Realtime** for listening to database changes, syncing state across clients, and broadcasting to channels\n- **Edge Functions** for globally distributed server-side code close to users\n- **AI & Vectors**, **Cron**, **Queues**\n- **Data REST API** and **GraphQL API**\n- Client libraries for **JavaScript, Flutter, Python, C#, Swift, Kotlin**\n- Quickstarts for many frameworks/mobile stacks, including **Next.js, React, Vue, SvelteKit, Astro, Flutter, Expo, Android Kotlin, iOS SwiftUI, Laravel, Rails, Spring Boot**\n\n### Hero use cases the docs emphasize\n- Building a **complete backend platform** from database to app logic\n- **Connecting a framework quickly** via quickstarts\n- **Mobile and web apps** with auth, storage, realtime sync, and server-side logic\n- **AI-enabled apps**, scheduled workflows, and queue-based processing\n- **Migrating existing apps** from systems like Firebase, Auth0, MySQL, Postgres, and others\n\n### What it rewards in hackathon projects\nThe docs don’t list judging criteria or prizes, but they strongly signal value in projects that:\n- Use **multiple Supabase primitives together** end-to-end\n- Show **fast startup/clear integration** with a supported framework\n- Demonstrate **realtime**, **auth**, **storage**, or **edge execution** in a polished app\n- Leverage **RLS-secured storage/database access** or migration from another stack\n\n### Recent or notable features worth building on now\n- **AI & Vectors**\n- **Cron** and **Queues**\n- **GraphQL API**\n- **Edge Functions**\n- The docs also highlight the **Supabase CLI** workflow and an **AI-assisted setup path** via “Build with AI tools” / “Ask AI” style guidance",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Arc'Trek",
+      "url": "https://devpost.com/software/arc-trek",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration There were a couple of things that inspired us to take on this project. Arc'teryx is a well-known and well-loved brand known for their high quality outdoor gear. Both outdoors and online, Arc'teryx has developed a great reputation. To combine technology and the company's strengths, we had a vision for an omnichannel experience that follows customers from the store, to the trails, and with their friends. Thus, we came up with Arc'Trek as a mobile app that customers can take with them anywhere. ## What it does * **Personalized Trail Recommendations**: Arc'Trek provides personalized recommendations for hiking trails based on user preferences such as experience level, location, and interests. This helps users discover new outdoor destinations that align with their skill level and interests. Users will be able to build community with friends on the app. * **Product Suggestions*"
+    },
+    {
+      "source": "devpost",
+      "title": "6DAYS",
+      "url": "https://devpost.com/software/6days",
+      "meta": "Devpost",
+      "excerpt": "### About the Project The idea for **6days** was inspired by my own experience as an international student in Korea. Many students often felt isolated, unsure of how to join events, or hesitant to approach student clubs and associations. Besides, in Korea, local students can easily join various clubs outside campus, through existing apps, but for foreigners, these platforms are difficult to use because **almost everything is in Korean**. This creates a barrier to participation and leaves many international students missing out on valuable opportunities. **6days** was built to break this barrier by providing a bilingual, accessible platform that helps students connect with clubs, events, and communities without language being an obstacle. * * * ### Inspiration * I noticed how difficult it was for new students to discover events without knowing Korean well. * Friends often told me they wis"
+    },
+    {
+      "source": "devpost",
+      "title": "Alpha Q",
+      "url": "https://devpost.com/software/alpha-q",
+      "meta": "Devpost",
+      "excerpt": "## What it does FoodShare is a proximity based platform for users to share their excess food with others living in the same neighbourhood, reducing avoidable food waste while at the same time providing food for those who need it. Using FoodShare, residents will be able to choose from different residential areas to see listings for excess food. **Ideally, listings up to 1km away from the user would be shown as this allows for: Easier pickup, more convenient for users & earlier pickup Establishing a sense of community When creating FoodShare listings, users are required to take photos of their leftover food, so as to allow interested parties to judge the quality of the food before getting in contact with the food provider. Then they will be able to upload pictures of excess food that they have. Interested parties can contact the giver to get the food from them at no cost, with the collecti"
+    },
+    {
+      "source": "devpost",
+      "title": "DM if Interested",
+      "url": "https://devpost.com/software/dm-if-interested",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "github",
+      "title": "ilhamfp/pasal",
+      "url": "https://github.com/ilhamfp/pasal",
+      "meta": "GitHub · 286★ · TypeScript",
+      "excerpt": "Pasal.id - The first open, AI-native Indonesian legal platform. MCP server + REST API + web app giving AI grounded access Indonesian laws. <p align=\"center\"> <picture> <source media=\"(prefers-color-scheme: dark)\" srcset=\"logo/lockup-dark-bg.svg\" /> <img src=\"logo/lockup-primary.svg\" alt=\"Pasal.id\" height=\"64\" /> </picture> </p> <h3 align=\"center\">The First Open, AI-Native Platform for Indonesian Law</h3> <p align=\"center\"> <a href=\"https://www.loom.com/share/da211318bbe14c4396840b97f5ab8603\">Demo Video</a> · <a href=\"https://pasal.id\">Website</a> · <a href=\"https://pasal.id/connect\">Connect to"
+    },
+    {
+      "source": "github",
+      "title": "joshenlim/meme-maker",
+      "url": "https://github.com/joshenlim/meme-maker",
+      "meta": "GitHub · 137★ · JavaScript",
+      "excerpt": "Meme Maker for Supabase's Hackathon. Built with Supabase, Tailwind, Next.JS # Meme Maker Built with Next.JS, Supabase, Tailwind, and Fabric.JS. Under Supabase specifically, the services integrated include the database itself, authentication and storage, along with the relevant security rules written via policies. Oh and everything was done via the Supabase dashboard which is really nifty. A project built for [Supabase's Hackathon]('https://supabase.io/blog/2021/07/30/1-the-supabase-hackathon'), probably will not be maintained thereafter. A very simplified interface to build, export, and share"
+    },
+    {
+      "source": "github",
+      "title": "JimmyLv/ChatVox",
+      "url": "https://github.com/JimmyLv/ChatVox",
+      "meta": "GitHub · 102★ · TypeScript",
+      "excerpt": "\"Chat With Any Video\" project in 24 hours, challenge myself to complete in @Supabase's AI Hackathon. # ChatVox - \"Chat With Any Video\" > based on Supabase's [Next.js OpenAI Doc Search Starter](https://github.com/supabase-community/nextjs-openai-doc-search?og=v2) ![ChatVox Cover Image](/public/og-image.png) ChatVox · Chat With Any Video: This project takes the YouTube/Podcast link you enter or the local Video/Audio file (WIP) you upload on the page, then you can chat with the video, just like ChatGPT! 🤩 Talking to a video is essentially talking to this person, It meant \"chat with wisdom\" 🤣 I'm"
+    },
+    {
+      "source": "github",
+      "title": "joshcawthorne/LunaDesk",
+      "url": "https://github.com/joshcawthorne/LunaDesk",
+      "meta": "GitHub · 92★ · JavaScript",
+      "excerpt": "The people-first scheduling tool, coming in a year starting with a 2. LunaDesk is a web app, originally created by Josh Cawthorne and known as \"WorkFrom\" for the Supabase Hackathon. ![LunaDesk Logo](https://lunadesk.netlify.app/images/githubPhoto.jpg) # LunaDesk ### What is LunaDesk? LunaDesk is a web app created by Josh Cawthorne for the Supabase Hackathon. The concept of the app is for companies to be able to sign-up, and enable employees to share which days they're working in the office, and which days they're working from home, to allow better planning on when teams should be in the office"
+    }
+  ]
+}

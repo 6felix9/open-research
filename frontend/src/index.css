@@ -177,6 +177,12 @@
     text-rendering: optimizeLegibility;
   }
 
+  html,
+  body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   body {
     background-image:
       radial-gradient(1200px 600px at 75% -10%, var(--halo-1), transparent 60%),

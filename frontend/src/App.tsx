@@ -5,6 +5,7 @@ import ResearchScreen from './components/ResearchScreen'
 import IdeaCards from './components/IdeaCards'
 import LogSlideover from './components/LogSlideover'
 import type { LogEntry, Idea } from './data'
+import { readSse } from './sse'
 
 function toggleSet<T>(prev: Set<T>, val: T): Set<T> {
   const next = new Set(prev)
@@ -24,30 +25,29 @@ function App() {
   const [runState, setRunState] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
   const [showLog, setShowLog] = useState(false)
   const [customSponsorUrls, setCustomSponsorUrls] = useState<string[]>([])
-  const [keysConfig, setKeysConfig] = useState<Record<string, boolean> | null>(null)
+  const [config, setConfig] = useState<{ reachable: boolean; serverKey: boolean } | null>(null)
+  const [apiKey, setApiKey] = useState(() => {
+    try { return sessionStorage.getItem('openai_key') ?? '' } catch { return '' }
+  })
 
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [synergyText, setSynergyText] = useState('')
   const [ideas, setIdeas] = useState<Idea[]>([])
 
   useEffect(() => {
-    fetch('/api/config/keys')
+    fetch('/api/config')
       .then(res => {
         if (!res.ok) throw new Error('Backend config check failed')
         return res.json()
       })
-      .then(data => setKeysConfig(data))
-      .catch(err => {
-        console.error('Failed to fetch keys config:', err)
-        setKeysConfig({
-          OPENAI_API_KEY: false,
-          EXA_API_KEY: false,
-          FIRECRAWL_API_KEY: false,
-          JINA_API_KEY: false,
-          GITHUB_TOKEN: false
-        })
-      })
+      .then(data => setConfig({ reachable: true, serverKey: !!data.server_key }))
+      .catch(() => setConfig({ reachable: false, serverKey: false }))
   }, [])
+
+  const updateApiKey = (key: string) => {
+    setApiKey(key)
+    try { sessionStorage.setItem('openai_key', key) } catch { /* storage unavailable */ }
+  }
 
   const addCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => [...prev, url])
   const removeCustomSponsorUrl = (url: string) => setCustomSponsorUrls(prev => prev.filter(u => u !== url))
@@ -59,59 +59,64 @@ function App() {
     setRunState('running')
     setShowLog(false)
 
-    try {
-      const res = await fetch('/api/config/keys')
-      const keys: Record<string, boolean> = await res.json()
-      const missing = Object.entries(keys).filter(([, ok]) => !ok).map(([k]) => k)
-      if (missing.length > 0) {
-        setLogs([{ id: '0', step: '00 · CONFIG', text: `Cannot start: missing API keys — ${missing.join(', ')}.`, final: true, error: true }])
-        setRunState('error')
-        return
-      }
-    } catch {
-      setLogs([{ id: '0', step: '00 · CONFIG', text: 'Cannot start: the research backend is not reachable. This deployment is frontend-only.', final: true, error: true }])
+    const fail = (text: string) => {
+      setLogs([{ id: '0', step: '00 · CONFIG', text, final: true, error: true }])
       setRunState('error')
+    }
+
+    let res: Response
+    try {
+      res = await fetch('/api/research/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(apiKey.trim() && { 'X-OpenAI-Key': apiKey.trim() }),
+        },
+        body: JSON.stringify({
+          sponsors: [...selectedSponsors],
+          interests: [...selectedInterests],
+          theme,
+          seed,
+          skills: [...skills],
+          time_budget: timeBudget,
+          custom_sponsor_urls: customSponsorUrls,
+        }),
+      })
+    } catch {
+      fail('Cannot start: the research backend is not reachable. This deployment is frontend-only.')
+      return
+    }
+    if (!res.ok || !res.body) {
+      const detail = await res.json().then(d => d.detail).catch(() => null)
+      fail(`Cannot start: ${typeof detail === 'string' ? detail : `request failed (${res.status})`}`)
       return
     }
 
-    const params = new URLSearchParams({
-      sponsors: [...selectedSponsors].join(','),
-      interests: [...selectedInterests].join(','),
-      theme,
-      seed,
-      skills: [...skills].join(','),
-      time_budget: timeBudget,
-      depth: String(depth),
-      custom_sponsor_urls: customSponsorUrls.join(','),
-    })
-
-    const es = new EventSource(`/api/research/stream?${params}`)
-
-    es.addEventListener('log', e => {
-      setLogs(prev => [...prev, JSON.parse(e.data)])
-    })
-
-    es.addEventListener('synergy', e => {
-      setSynergyText(JSON.parse(e.data).text)
-    })
-
-    es.addEventListener('ideas', e => {
-      setIdeas(JSON.parse(e.data))
-    })
-
-    es.addEventListener('done', () => {
-      es.close()
-      setLogs(prev => {
-        const hasFatalError = prev.some(l => l.error && l.final)
-        setRunState(hasFatalError ? 'error' : 'done')
-        return prev
+    let finished = false
+    let fatal = false
+    try {
+      await readSse(res.body, (event, raw) => {
+        const data = JSON.parse(raw)
+        switch (event) {
+          case 'log':
+            if (data.error && data.final) fatal = true
+            setLogs(prev => [...prev, data])
+            break
+          case 'synergy':
+            setSynergyText(data.text)
+            break
+          case 'ideas':
+            setIdeas(data)
+            break
+          case 'done':
+            finished = true
+            break
+        }
       })
-    })
-
-    es.onerror = () => {
-      es.close()
-      setRunState('error')
+    } catch {
+      /* connection dropped mid-stream; handled below */
     }
+    setRunState(finished && !fatal ? 'done' : 'error')
   }
 
   const renderMainContent = () => {
@@ -127,7 +132,7 @@ function App() {
   }
 
   return (
-    <div className="grid grid-cols-[340px_1fr] max-[1100px]:grid-cols-[300px_1fr] h-screen gap-0">
+    <div className="grid grid-cols-[340px_1fr] max-[1100px]:grid-cols-[300px_1fr] h-dvh gap-0">
       <Sidebar
         selectedSponsors={selectedSponsors}
         toggleSponsor={id => setSelectedSponsors(prev => toggleSet(prev, id))}
@@ -148,7 +153,9 @@ function App() {
         customSponsorUrls={customSponsorUrls}
         addCustomSponsorUrl={addCustomSponsorUrl}
         removeCustomSponsorUrl={removeCustomSponsorUrl}
-        keysConfig={keysConfig}
+        config={config}
+        apiKey={apiKey}
+        setApiKey={updateApiKey}
       />
       <main className="flex flex-col min-h-0 bg-bg-0">
         {renderMainContent()}

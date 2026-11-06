@@ -1,0 +1,65 @@
+{
+  "id": "modal",
+  "name": "Modal",
+  "updated": "2026-11-07",
+  "docs_url": "https://modal.com/docs/guide",
+  "profile": "## Modal — Hackathon Builder Profile\n\n### Capabilities and APIs you can use in a weekend\n- **Serverless Python-first AI infrastructure**: write code, run it in Modal’s cloud containers, no Kubernetes/Docker/AWS setup required.\n- **GPU inference and training**: run low-latency inference with **sub-second cold starts**, train or fine-tune on the latest GPUs.\n- **Batch and parallel workloads**: scale batch jobs massively in parallel.\n- **Isolated Sandboxes**: spin up thousands of secure sandboxes for executing AI-generated code.\n- **Web apps and endpoints**: deploy HTTP apps, web functions, streaming endpoints, sticky sessions, and tunnels/proxies.\n- **Storage + data plumbing**: volumes, dicts, queues, dataset ingestion, cloud bucket mounts, model weights.\n- **Ops features**: secrets, environment variables, retries, timeouts, scheduling/cron, logs, observability integrations.\n- **SDKs**: primary Python support; JavaScript/TypeScript and Go can also call functions, run sandboxes, and manage resources.\n\n### Hero use cases showcased\n- **LLM inference** with open weights or custom models.\n- **Speech transcription** in real time.\n- **Model fine-tuning / training** on GPUs.\n- **Coding agents** using Sandboxes + LangGraph.\n- **Large-scale data processing** like parallel Parquet processing on S3.\n- **General web scraping and simple cloud jobs** as starter examples.\n\n### What it rewards in hackathon projects\nThe docs suggest strong signals for:\n- **AI-heavy products** that need inference, training, or agent execution.\n- **Fast demos with real scale**: low-latency responses, parallel processing, or workloads that spin up on demand.\n- **Projects that use Modal-native primitives** like Sandboxes, streaming endpoints, batch jobs, or GPU-backed functions.\n- **Production-minded reliability** via retries, timeouts, secrets, and deployment support.\n\n### Recent or notable features worth building on\n- **Sub-second cold starts** for inference.\n- **Zero-config infrastructure**: container environments and GPU specs are defined in code.\n- **High GPU availability / cost optimization** through cloud capacity pooling.\n- **Sandboxes at scale** for secure execution of generated code.\n- **JavaScript/Go SDKs Beta** for multi-language workflows.\n- **Streaming endpoints**, **sticky sessions**, and **multi-node training/clusters** for more advanced app behavior.",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Apex Multi-Modal AI Systems",
+      "url": "https://devpost.com/software/apex-multi-modal-ai-systems",
+      "meta": "Devpost",
+      "excerpt": "## InspirationThe comes from the battlefield of global markets. As a Senior XAU/USD Trader, I realized that success in trading and E-commerce depends on one thing: Speed of Intelligence. I wanted to build an \"AI Arsenal\" that doesn't just provide data, but executes actions—whether it's generating viral content to sell products or detecting high-frequency gold scalping opportunities before the market moves. ## What it does Apex Multi-Modal AI Systems is a comprehensive, three-pronged system: TrendReel AI: Automatically converts product links into trending videos and manages sales using AI-powered \"comments to profits\" logic. SPY&Verify: A market analysis tool that examines competitors and saturation levels to identify \"blue ocean\" opportunities. Gold-Flow AI: A high-frequency (n8n) trading system that monitors all timeframes, even micro-timeframes from 1 to 15 minutes, to detect accurate "
+    },
+    {
+      "source": "devpost",
+      "title": "AI Supported Multi-Modal Integration with AWS infra",
+      "url": "https://devpost.com/software/ai-supported-multi-modal-integration-with-aws-infra?trk=public_post_comment-text",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration At Codesolvent we believe augmenting human abilities with AI capabilities via well thought out and deeply integrated workspace environments is one of the best ways to leverage current capabilities of AI and deliver real value. And by well \"thought out\" we mean \"not chatbots\". https://codesolvent.com/botworx/intelligent-workspace/ ## What it does This project showcases leveraging AI to interact with the AWS infrastructure paired with an Intelligent Workspace environment that puts humans at the center of AI supported work. Specifically, it allows a user to: * Ask personal assistant to Upload a PDF file to AWS. * The personal assistant leverages a Solvent aws-cli-agent that connects to AWS * Solvent aws-cli-agent uploads pdf to AWS * AWS extracts text from pdf and returns result. * Solvent aws-cli-agent Saves the result locally. * Personal assistant invokes human-in-the-loop "
+    },
+    {
+      "source": "devpost",
+      "title": "ActiveLearn",
+      "url": "https://devpost.com/software/activelearn",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Over the last year, everyone has learned to communicate over video conferencing systems. These systems were not built for education. What if we could augment these systems with something that enhances student-teacher engagement on any web conferencing system? ## What it does ActiveLearn empowers teachers to create, share, and engage with their students with interactive documents. With features such as live presentations, sharing documents, and interactive quizzes, students will be engaged in the classroom. A higher level of engagement in the classroom will result in a higher level of understanding of the concepts taught in class. ## How we built it We use a combination of front-end and back-end languages to build ActiveLearn. We use React.js, HTML, CSS, and JS to develop the front end of our website. We use react-pdf to view the PDF viewer, used apexcharts.js to create a b"
+    },
+    {
+      "source": "devpost",
+      "title": "AlzPredict",
+      "url": "https://devpost.com/software/alzpredict",
+      "meta": "Devpost",
+      "excerpt": "## About the Project ### What Inspired Us Alzheimer's disease affects millions worldwide, and early detection is crucial for effective intervention. Current diagnostic approaches often rely on single data modalities—either genetic risk factors or brain imaging—but clinicians in practice use both. We were inspired to create an AI system that mirrors this real-world approach by **fusing multiple data sources** to provide more accurate and comprehensive predictions. The challenge of combining fundamentally different data types—genetic variants (tabular) and MRI brain scans (images)—presented an exciting opportunity to explore **multi-modal deep learning** and **attention mechanisms**, cutting-edge techniques that could unlock new insights in medical AI. ### What We Learned Building AlzFusion taught us several valuable lessons: 1. **Multi-Modal Fusion is Powerful**: Combining genetic and ima"
+    },
+    {
+      "source": "github",
+      "title": "srshriv/Multi-Modal_Evidence_Review_System-Orchestrate_Winner",
+      "url": "https://github.com/srshriv/Multi-Modal_Evidence_Review_System-Orchestrate_Winner",
+      "meta": "GitHub · 13★ · Python",
+      "excerpt": "Single-agent multi-modal system for insurance damage claim verification. #1 globally, HackerRank Orchestrate June 2026 (15,295 registrants). Anthropic, OpenAI, Groq, and Gemini support with a deterministic safety gate # Multi-Modal Evidence Review > 🏆 **#1 globally — HackerRank Orchestrate, June 2026** · Final score **72.5 / 100** > 15,295 registered · 2,039 shipped a working agent ![Final leaderboard — #1 of all finalists, 72.5 / 100](docs/leaderboard.png) A single-agent system that reviews insurance damage claims from **submitted photos**, a **claim conversation**, the claimant's **history**"
+    },
+    {
+      "source": "github",
+      "title": "itsArnavPrasad/multi-modal-route-selector",
+      "url": "https://github.com/itsArnavPrasad/multi-modal-route-selector",
+      "meta": "GitHub · 7★ · Python",
+      "excerpt": "Winner of LogiTHON 2025 hackathon, our project aims to help small logistics providers quickly determine the best shipping routes across borders. By analyzing shipment details, it recommends optimal routing based on cost estimates, transit times, and feasibility for different transportation modes (air, sea, land, or combinations). # 🚛 Multi-Modal Cross-Border Route Selector ### 🏆 **Winner of LogiTHON 2025** *A logistics optimization tool developed by Team Fusion Flow at IIT Bombay* --- ## 📌 Problem Statement A small logistics provider needs a **fast and efficient** way to determine the best cro"
+    },
+    {
+      "source": "github",
+      "title": "coo1white/yokoten-doctor",
+      "url": "https://github.com/coo1white/yokoten-doctor",
+      "meta": "GitHub · 7★ · Python",
+      "excerpt": "See what an AI understands from your repo, before it touches your code. <p align=\"center\"> <a href=\"https://youtu.be/QIsv1PGTWX8\"><img src=\"docs/readme-hero.png\" width=\"420\" alt=\"Pixel-art AI figure with a green visor. Text: Don't trust the AI. Verify it. Click to watch the demo video.\"></a> </p> <h1 align=\"center\">yokoten doctor</h1> <p align=\"center\"><b>See what an AI understands from your repo, before it touches your code.</b></p> <p align=\"center\"> <a href=\"https://doctor.yokoten.app\"><b>Try it now</b></a> · <a href=\"https://youtu.be/QIsv1PGTWX8\">Watch the 2-minute demo</a> · <a href=\"docs"
+    },
+    {
+      "source": "github",
+      "title": "swayam-mishra/hackerrank-orchestrate",
+      "url": "https://github.com/swayam-mishra/hackerrank-orchestrate",
+      "meta": "GitHub · 7★ · Python",
+      "excerpt": "HackerRank Orchestrate hackathon AI agents: a multi-modal damage-claim verifier (3rd of 1,773) and a support-triage RAG agent (60th of 1,349). The model describes; plain code decides # HackerRank Orchestrate: my hackathon projects This repo holds my entries to **HackerRank Orchestrate**, a monthly 24-hour event where you design and ship an AI agent. Each month lives in its own folder with its own data, code, and a single README that walks through the whole thing. If you're here to learn from the code, start with whichever project sounds most interesting and read its README top to bottom. | Mon"
+    }
+  ]
+}

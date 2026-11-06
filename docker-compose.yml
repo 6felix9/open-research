@@ -17,13 +17,3 @@ services:
         required: false
       - path: .env.local
         required: false
-    environment:
-      CHROMA_HOST: chromadb
-      CHROMA_PORT: "8000"
-    depends_on:
-      - chromadb
-
-  chromadb:
-    image: chromadb/chroma
-    ports:
-      - "8000:8000"

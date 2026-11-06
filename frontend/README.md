@@ -1,75 +1,62 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Single-page React 19 + Tailwind v4 app for Open Research. It collects the brief (sponsors, theme, interests, stack), streams results from the backend over SSE, and renders the live research log and the final ranked idea cards.
 
-Currently, two official plugins are available:
+## Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # dev server on :5173 (proxies /api → :8080)
+npm run build    # tsc + vite build → dist/
+npm run lint     # eslint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The dev server proxies `/api/*` to `http://localhost:8080` (configured in `vite.config.ts`), so run the backend alongside it — see [`../backend/README.md`](../backend/README.md). Or run the full stack with `docker compose up` from the repo root.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Architecture
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+All application state lives in `src/App.tsx`; there is no external state library. On Run, `App.tsx` POSTs the brief to `/api/research/stream` and reads the SSE response with a small `fetch` reader in `src/sse.ts` (`EventSource` can't POST or send headers). On load it calls `GET /api/config`; if the server has no OpenAI key, the sidebar shows a key field and the key is sent in an `X-OpenAI-Key` header, kept in `sessionStorage` only.
+
+### Render state machine
+
+`runState: 'idle' | 'running' | 'done' | 'error'` drives the main content area:
+
 ```
+idle    → <EmptyState />       placeholder, no interaction
+running → <ResearchScreen />   live log + progress bar
+error   → <ResearchScreen />   same view; header reads "Research failed"
+done    → <IdeaCards />        results grid
+```
+
+`<LogSlideover />` is always mounted and toggled by `showLog`.
+
+### SSE events
+
+| Event | Action |
+|---|---|
+| `log` | Append a `LogEntry` to `logs` |
+| `synergy` | Set `synergyText` |
+| `ideas` | Replace the `ideas` array |
+| `done` | Close the stream; `runState = 'error'` if any log is `error && final`, else `'done'` |
+
+## Project Structure
+
+```
+frontend/src/
+├── main.tsx              # mounts <App /> into #root
+├── App.tsx               # all state, SSE handling, layout
+├── data.ts               # static data (SPONSORS, INTERESTS, …) + TS interfaces
+├── index.css             # design system: OKLCH tokens, fonts, animations
+└── components/
+    ├── Sidebar.tsx       # brief input: sponsors, theme, advanced options
+    ├── EmptyState.tsx    # idle placeholder
+    ├── ResearchScreen.tsx# live log + progress while running
+    ├── IdeaCards.tsx     # results grid with filters/sort + IdeaCard
+    ├── LogSlideover.tsx  # slide-in full log overlay
+    ├── LogRow.tsx        # one log line (shared by screen + slideover)
+    └── Compare.tsx       # stub (returns null) — reserved for a compare view
+```
+
+`data.ts` holds only static data and TypeScript interfaces (`Sponsor`, `Idea`, `LogEntry`); logs, ideas, and synergy text are runtime state in `App.tsx`. The `Idea` / `LogEntry` interfaces mirror the backend Pydantic models in `backend/agents/synthesizer.py`.
+
+See [`AGENTS.md`](AGENTS.md) for the full component guide, state inventory, design system, and Tailwind conventions.

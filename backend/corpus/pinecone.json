@@ -1,0 +1,65 @@
+{
+  "id": "pinecone",
+  "name": "Pinecone",
+  "updated": "2026-11-07",
+  "docs_url": "https://docs.pinecone.io/guides/get-started/overview",
+  "profile": "```md\n## Pinecone\n\n**What it is:** Pinecone Database is a search engine for AI agents and applications, focused on semantic search, knowledge retrieval, and long-term memory at scale.\n\n### Capabilities and APIs a builder can use in a weekend\n- **One core API:** the **Documents API**.\n- **Upsert and query with text**; Pinecone can **generate embeddings server-side** via **integrated embedding**.\n- Build a single index that supports:\n  - **Full-text search**\n  - **Semantic search**\n  - **Sparse-vector search**\n  - **Hybrid search**\n- Use **metadata filters** to narrow results, then **rerank** for relevance.\n- Separate customer/workspace data with **namespaces** for multitenancy.\n- Scale query load with **dedicated read nodes**.\n- For deployment/ops: **backups** and **Bring Your Own Cloud (BYOC)** are available.\n\n### Hero use cases the docs showcase\n- **Search**\n- **Recommendations**\n- **Long-term memory** for AI agents\n- **Knowledge retrieval**\n- Agent apps grounded in your data\n- Related product docs also point to **RAG chat** and **grounded, cited answers** via Pinecone Assistant / Pinecone Nexus.\n\n### What it rewards in hackathon projects\nThe docs don’t state explicit judging criteria, but they strongly signal value in projects that:\n- Use Pinecone as the retrieval layer for **AI agents/apps**\n- Show **fast, relevant retrieval** across multiple search modes\n- Use **metadata filtering + reranking**\n- Demonstrate **tenant isolation** with namespaces\n- Thoughtfully address **production readiness** (backups, BYOC, scaling)\n\n### Recent or notable features worth building on now\n- **Integrated embedding**: query and index with text, with vector generation handled by Pinecone.\n- **Unified retrieval from one index**: full-text + semantic + sparse + hybrid search.\n- **Dedicated read nodes** for sustained high query volumes.\n- **BYOC** for production deployments in your own cloud account.\n- **AI coding tools integration** and an **MCP server** for connecting MCP-compatible agents to Pinecone search and index management.\n- The docs also highlight **Pinecone Assistant** and **Pinecone Nexus** as adjacent products for grounded AI experiences.\n```",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Isomorphic",
+      "url": "https://devpost.com/software/isomorphic",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration As our data-driven world continues to grow exponentially, it's no surprise that the complexity of our data grows with it. Data scientists and researchers are dealing with an increasing number of dimensions, and understanding high-dimensional data is becoming a significant challenge. We were inspired by the need for better tools to visualize and understand these multidimensional spaces. When we found out about Pinecone, a vector database that enables users to deal with high-dimensional data, we were struck by the lack of effective visualization tools to comprehend the intricacies of such data. Our desire to bridge this gap and make high-dimensional data more understandable, manageable, and utilizable was the spark that ignited the creation of our project. ## What it does Our project offers an intuitive, easy-to-use web UI that visualizes high-dimensional Pinecone vector dat"
+    },
+    {
+      "source": "devpost",
+      "title": "852Shepherd - build your gpt in one minute without coding",
+      "url": "https://devpost.com/software/852shepherd",
+      "meta": "Devpost",
+      "excerpt": "## About the Project ### Value proposition Users can build their own knowledge GPT in just one minute without any coding required! They have the ability to upload files, paste the URL of web pages, or provide links to YouTube videos. Once provided, our system takes care of everything else! Users can engage in conversations with the knowledge and explore the thinking process within GPT, backed by sources and references. ### Inspiration Our project was inspired by the desire to explore cutting-edge technologies and create a solution that leverages the power of artificial intelligence and data retrieval. The hackathon provided us with the perfect opportunity to dive into various tools and frameworks, including Pinecone, OpenAI API, AWS, Vercel, and Langchain. ### Learning Experience Throughout the hackathon, we had an incredible learning experience. One of the highlights was working with Pi"
+    },
+    {
+      "source": "devpost",
+      "title": "open-source-chat",
+      "url": "https://devpost.com/software/oschat",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Many software programmers are tired of endless searches through open-source documentation. Let me introduce our Open Source Chat, your go-to resource for open-source tools. From bug solving to answering your questions, we've got you covered. Streamline your understanding, get expert guidance, and conquer coding challenges effortlessly. Join the revolution today and unlock the power of open-source knowledge! ## What it does Introducing Open Source Chat, a game-changing project that harnesses the power of AI technology to revolutionize your open-source journey. Our chatbot is your knowledge companion, simplifying the search for information across a wide range of open-source tools. Through advanced text embedding techniques, we make document searching seamless, efficient, and powerful. Ask questions, explore documentation, and gain deep insights into various open-source tools"
+    },
+    {
+      "source": "devpost",
+      "title": "OpenWorldAI",
+      "url": "https://devpost.com/software/openworldai",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration During the beginning of 2023, we were having a difficult time keeping up with all the cool new projects and developments in the AI space. Additionally, there was also a difficulty with understanding which tools we could implement into our workflows and daily lives. Ease of discover and ease of use are the biggest barriers to AI adaptation at this moment, in our opinion. So our initial project was to create a resource website with a UX that will help users discover new projects and understand how each project can help users. We used OpenAI to classify the projects and categorize them. For this hackathon, we have added semantic search to help users understand what projects they can start using daily. Many use-cases get lost in databases and directories because of inefficient search functionality. ## What it does We have a collection of over a thousand AI projects and compani"
+    },
+    {
+      "source": "github",
+      "title": "sfuller14/semantic-consensus",
+      "url": "https://github.com/sfuller14/semantic-consensus",
+      "meta": "GitHub · 16★ · Python",
+      "excerpt": "E-commerce intelligent search platform. Pinecone/Devpost Hackathon 2023. # Commercial Consensus Pinecone/Devpost Hackathon June 2023 - Try it out: [Commercial Consensus](http://ecommerce-recsys.us-east-2.elasticbeanstalk.com) (hosted on AWS) - [Execution flow diagrams](#execution-flow) ## Demo ![demogif](https://github.com/sfuller14/public_ref/blob/master/recsys.gif) ## The Problem Traditional implementations of collaborative filtering, content-based filtering, and graph-based recommendation methods rely heavily on structured, tabular data. However, this approach is fraught with limitations du"
+    },
+    {
+      "source": "github",
+      "title": "ZanyuanYang/UCB-Hackathon-AI",
+      "url": "https://github.com/ZanyuanYang/UCB-Hackathon-AI",
+      "meta": "GitHub · 6★ · TypeScript",
+      "excerpt": "Conversational Product Recommendations for E-Commerce # Yonder Conversational Product Recommendations Designed For E-commerce Website: https://yonder.vercel.app/ Devpost: https://devpost.com/software/yonder-search Youtube Demo: https://www.youtube.com/watch?v=PfJhZQgpHm0 ## Techstack - Frontend: React, Typescript, Tailwind CSS, Material UI - Backend: Node.js, LangChain, OpenAI, PineCone, Mongodb ## Inspiration Think of your most positive shopping experiences. You may think of the time you got help from an associate at Apple's Genius Bar for your next big work purchase or that time the Ritz-Car"
+    },
+    {
+      "source": "github",
+      "title": "devmaxime/codextranauts",
+      "url": "https://github.com/devmaxime/codextranauts",
+      "meta": "GitHub · 4★ · Python",
+      "excerpt": "Pinecone Hackathon 2023: Codextranauts Team Repository. # Pinecone Hackathon 2023 - Vectornauts Context-aware code assistant. ## Config Make sure to add this to your project's package.json. Make sure to change default ``` \"contributes\": { \"configuration\": { \"title\": \"Codextranaunts\", \"properties\": { \"codextranaunts.githubUsername\": { \"type\": \"string\", \"default\": \"\", \"description\": \"Your GitHub username, this is purely used as an identifier for now, feel free to use anything\" }, \"codextranaunts.repository\": { \"type\": \"string\", \"default\": \"\", \"description\": \"Your GitHub repository, this is purel"
+    },
+    {
+      "source": "github",
+      "title": "AqueelAhmedV/questx",
+      "url": "https://github.com/AqueelAhmedV/questx",
+      "meta": "GitHub · 3★ · Jupyter Notebook",
+      "excerpt": "Netropolis Hackathon Submission # Questx App (Netropolis Hackathon Submission) ## Stack - [React](https://reactjs.org/) - A JavaScript library for building user interfaces. - [Django](https://www.djangoproject.com/) - Django makes it easier to build better web apps more quickly and with less code. - [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling - [Typescript](https://www.typescriptlang.org/) - JavaScript with syntax for types. ## Project structure ``` $PROJECT_ROOT │ ├── web # backend file │ ├── frontend # React files │ ├── web/templates # Django Templates │ ├── web/static-dev"
+    }
+  ]
+}

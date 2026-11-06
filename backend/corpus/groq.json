@@ -1,0 +1,65 @@
+{
+  "id": "groq",
+  "name": "Groq",
+  "updated": "2026-11-07",
+  "docs_url": "https://console.groq.com/docs/overview",
+  "profile": "# Groq\n\nGroq positions itself as **fast LLM inference**, with an **OpenAI-compatible** API that’s “simple to integrate” and “easy to scale.”\n\n## Capabilities and APIs a builder can use in a weekend\n- **Text generation** via the Groq API\n- **Reasoning** models/workflows\n- **Speech to text** and **text to speech**\n- **OCR and image recognition**\n- **Content moderation**\n- **Structured outputs**\n- **Prompt caching**\n- **Tool use**, including:\n  - **Groq built-in tools**\n  - **Code execution**\n  - **Browser search** (for GPT OSS models)\n  - **Remote tools and MCP**\n  - **Connectors** for external services\n  - **Local tool calling**\n- **Responses API** and **OpenAI compatibility** using:\n  - `https://api.groq.com/openai/v1`\n- **SDK libraries** and quickstart support\n- **Service tiers** including **Performance Tier**, **Flex Processing**, and **Batch Processing**\n- **LoRA inference** for advanced customization\n\n## Hero use cases Groq showcases\nThe docs emphasize:\n- **Fast language model apps**\n- **AI agents** that can connect to external tools and services\n- **Multimodal apps** using text, vision/OCR, and speech\n- **Developer/coding workflows**, with integrations for tools like Factory Droid, OpenCode, Kilo Code, Roo Code, and Cline\n- **Connected assistants**, including a highlighted example of **Google Workspace connectors** for Gmail, Calendar, and Drive\n\n## What it rewards in hackathon projects\nThe overview doesn’t list prizes or judging criteria, but it strongly signals that Groq values projects that are:\n- **Fast**\n- **Easy to integrate**\n- **Tool-using / agentic**\n- **Production-minded**\n- **OpenAI-compatible**\n- Built with **structured outputs**, **moderation**, and **latency optimization** in mind\n\n## Recent or notable features worth building on now\n- **Google Workspace Connectors** are highlighted as newly available\n- **Browser Search** support for **GPT OSS models**\n- **Prompt caching** for efficiency\n- **Performance Tier** and **Flex Processing**\n- **LoRA inference**\n- Strong emphasis on **production readiness** via latency, security, and metrics docs",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Anti-scam and Misinformation detection",
+      "url": "https://devpost.com/software/anti-scam-and-misinformation-detection",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration The rise of sophisticated scams across digital platforms, from phishing texts to fraudulent voicemails, inspired me to create an accessible tool to protect users. As someone passionate about AI and cybersecurity, I wanted to empower individuals to identify scams swiftly and confidently. My goal was to build a solution that bridges advanced AI with user-friendly design, making scam detection inclusive and practical for everyone. ## What it does The Scam Detector is an AI-powered tool that identifies potential scams in text messages, images, and audio files. Users can input text, upload images containing text, or submit WAV audio files through a user-friendly Gradio interface. The system processes these inputs as follows: Text Analysis: Directly analyzes user-entered text using Groq’s Llama-3.3-70B model to classify it as a scam or not, providing reasons and a confidence sco"
+    },
+    {
+      "source": "devpost",
+      "title": "1L0Gx",
+      "url": "https://devpost.com/software/1l0gx",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration The inspiration for **1L0Gx** came from a recurring pain point in cybersecurity: drowning in logs and alerts. Security teams are constantly overwhelmed by raw event streams, intrusion detection system (IDS) warnings, firewall alerts, failed login attempts, and application errors. I wanted to answer a simple question: > _What if AI could cut through the noise, summarize the real threats, and even act on them automatically?_ This idea became the foundation of 1L0Gx, a system that ingests logs in real time, analyzes them with large language models (LLMs), and triggers automated responses. * * * ## What I Learned Working on this project taught me how to: 1. **Integrate databases at scale**: I used **TiDB Serverless**, which is compatible with MySQL, to store both raw logs and structured incident data. It was eye-opening to see how TiDB can handle high-ingestion workloads while"
+    },
+    {
+      "source": "devpost",
+      "title": "MoodMosaic",
+      "url": "https://devpost.com/software/moodmosaic-efc2qu",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "ai gossip detector",
+      "url": "https://devpost.com/software/ai-gossip-detector-ni2gcw",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration The idea for AI Gossip Detective came from everyday conversations — the kind where you're left wondering, \"Did they really mean that?\" or \"Is this message friendly or something more?\" Miscommunication is common, and we wanted to create a playful yet insightful tool that helps people decode tone, emotion, and subtle signals in text-based chats. ## What it does AI Gossip Detective allows users to paste a chat conversation between two people, and then analyzes it using AI to detect: Tone and emotional intensity Possible intentions (e.g., flirting, sarcasm, lying, etc.) Overall mood and communication pattern Context-aware interpretations It provides a breakdown of hidden meanings, turning an ordinary chat into something fun, deep, and often revealing. ## How we built it We used: JavaScript/React for the frontend Groq API (open-weight LLM) for real-time AI analysis Netlify for "
+    },
+    {
+      "source": "github",
+      "title": "RanitDERIA/Chefini",
+      "url": "https://github.com/RanitDERIA/Chefini",
+      "meta": "GitHub · 43★ · TypeScript",
+      "excerpt": "AI-powered culinary companion that turns leftovers into gourmet meals. Features intelligent recipe generation, batch cooking planning, and scientific dish rescue. Built with Next.js 16, TypeScript, MongoDB & Llama 3 (Groq). <div align=\"center\"> ![GitHub repo size](https://img.shields.io/github/repo-size/RanitDERIA/Chefini?color=ffc72c) ![GitHub stars](https://img.shields.io/github/stars/RanitDERIA/chefini?style=social) ![GitHub forks](https://img.shields.io/github/forks/RanitDERIA/chefini?style=social) [![Twitter Follow](https://img.shields.io/twitter/follow/DeriaRanit?style=social)](https://t"
+    },
+    {
+      "source": "github",
+      "title": "SagarBiswas-MultiHAT/PythonicHackathon-CLI",
+      "url": "https://github.com/SagarBiswas-MultiHAT/PythonicHackathon-CLI",
+      "meta": "GitHub · 20★ · Python",
+      "excerpt": "Sagar is a Python-based command-line virtual assistant for CSE students and cybersecurity learners. It supports single-line and multi-line commands to open trusted websites, play curated music links, and answer questions using an AI model; designed for safe automation, learning, and terminal-first exploration. # A Pythonic Hackathon <div align=\"right\"> [![CI](https://img.shields.io/github/actions/workflow/status/SagarBiswas-MultiHAT/PythonicHackathon-CLI/ci.yml?branch=main)](https://github.com/SagarBiswas-MultiHAT/PythonicHackathon-CLI/actions) [![Python](https://img.shields.io/badge/python-3."
+    },
+    {
+      "source": "github",
+      "title": "srshriv/Multi-Modal_Evidence_Review_System-Orchestrate_Winner",
+      "url": "https://github.com/srshriv/Multi-Modal_Evidence_Review_System-Orchestrate_Winner",
+      "meta": "GitHub · 13★ · Python",
+      "excerpt": "Single-agent multi-modal system for insurance damage claim verification. #1 globally, HackerRank Orchestrate June 2026 (15,295 registrants). Anthropic, OpenAI, Groq, and Gemini support with a deterministic safety gate # Multi-Modal Evidence Review > 🏆 **#1 globally — HackerRank Orchestrate, June 2026** · Final score **72.5 / 100** > 15,295 registered · 2,039 shipped a working agent ![Final leaderboard — #1 of all finalists, 72.5 / 100](docs/leaderboard.png) A single-agent system that reviews insurance damage claims from **submitted photos**, a **claim conversation**, the claimant's **history**"
+    },
+    {
+      "source": "github",
+      "title": "olcaybuyan/llama-hoops",
+      "url": "https://github.com/olcaybuyan/llama-hoops",
+      "meta": "GitHub · 8★ · Python",
+      "excerpt": "LlamaCon Hackathon 2025 Project using Llama API and Groq Inferencing to extract Basketball Highlights and compose sports clips in real-time. ![llama-hoops header picture](assets/github-header.jpg) # llama-hoops LlamaCon Hackathon 2025 Project using Llama API and Groq Inferencing to extract Basketball Highlights and compose sports clips in real-time as well as a full game summaries. 🦙 where LLama API and Groq are used: - **event_detection.py** (Llama API - Multi-Image Understanding, Chat Completion with Structured Output & Train-of-Thought) - **speech_to_text.py** (Groq - Transcription through"
+    }
+  ]
+}

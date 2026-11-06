@@ -1,0 +1,65 @@
+{
+  "id": "mistral",
+  "name": "Mistral",
+  "updated": "2026-11-07",
+  "docs_url": "https://docs.mistral.ai/",
+  "profile": "## Mistral AI — Hackathon Builder Profile\n\n### Capabilities and APIs you can use in a weekend\n- **Core model API** via **Studio / Inference**: send prompts, compare models in the playground, and make first API requests with SDKs.\n- **Structured outputs**: extract validated objects from text with schemas.\n- **Tool/function calling**: let models call your Python functions.\n- **Multimodal**: analyze images; use **Mistral Large 4** and other multimodal models.\n- **Embeddings**: build semantic search or retrieval features.\n- **Audio**: speech-to-text, real-time transcription, text-to-speech, and **voice agents**.\n- **RAG / search**: libraries, search indices, Search Toolkit, and grounded Q&A.\n- **Agents / workflows**: build agents, add context, evaluate, deploy, and observe them; create durable workflows.\n- **Prompts and Skills**: store reusable prompts, package repeatable methods, and version them.\n- **Connectors**: register external tools and hand them to agents.\n- **Safety / moderation**: classify inputs and block unsafe content with guardrails.\n- **Observability**: traces, evaluations, and online evaluations.\n- **Batch jobs**: run many requests from a file.\n\n### Hero use cases the docs emphasize\n- **Productivity and coding agents** (Vibe Work / Vibe Code).\n- **Voice experiences**: transcription, speech generation, and voice agents.\n- **Document and knowledge apps**: RAG over libraries, search indices, and grounded answers.\n- **Agentic apps and workflows**: end-to-end agents with context, tools, evaluation, deployment, and monitoring.\n- **Data analysis**: upload spreadsheets and ask questions in plain language.\n- **Full-stack app scaffolding**: describe an app in natural language and generate the structure/files.\n\n### What it rewards in hackathon projects\nThe docs don’t mention hackathon judge criteria or prizes. But they clearly encourage projects that show:\n- **End-to-end shipping**: build, deploy, and observe an app/agent.\n- **Reusable structure**: prompts, skills, workflows, and connectors.\n- **Multimodal or voice interaction**\n- **Grounded / retrieval-based answers**\n- **Evaluation and observability**\n- **Safe inputs and moderation**\n\n### Recent or notable features worth building on now\n- **Mistral Large 4**: state-of-the-art open-weight, general-purpose multimodal model.\n- **Mistral Small 4**: hybrid model combining instruct, reasoning, and coding.\n- **Voxtral Mini Transcribe 3**: strong transcription and diarization.\n- **OCR 4.1**: paragraph-level bounding boxes, structural block labels, and block-level confidence scores.\n- **1M-token context third-party models** listed in the docs, including **Z.ai GLM 5.3** and **DeepSeek V4.1 Flash 1017**.\n- **Search Toolkit**, **online evaluations**, and **managed workflow deployment** for production-style hackathon demos.",
+  "prior_art": [
+    {
+      "source": "devpost",
+      "title": "Le CopyChat",
+      "url": "https://devpost.com/software/le-copychat",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Today’s robots are like computers from the 80s - very complicated and only usable by experts with years of experience. Programming them to do even one simple task is tough and requires a lot of technical knowledge. For robots to become everyday helpers, whether for repetitive tasks or heavy object lifting, learning new skills needs to be much easier. Most of us learn new skills by watching YouTube tutorials. The question is, can robots do the same - learn a skill just by watching a human in a video? ## What it does For robots to become everyday helpers, whether for repetitive tasks or heavy lifting, we need to make teaching them as simple as watching a tutorial video. In a previous Mistral hackathon (youtube.com/watch?v=_vsRd8RsCKo), we showed that a fine-tuned Mistral LLM could generate code to control a robot just by understanding natural language robot commands, such as"
+    },
+    {
+      "source": "devpost",
+      "title": "Alan Tuning",
+      "url": "https://devpost.com/software/alan-tuning",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "devpost",
+      "title": "Ambrozia AI",
+      "url": "https://devpost.com/software/ambrozia-ai",
+      "meta": "Devpost",
+      "excerpt": "## Inspiration Devin automates part of the software engineering work. We automate the work of sales teams. There's been great progress in animating faces but nothing is interactive. That's where we come in. ## What it does We create a sales person that has a human face and a Mistral brain. It will answer any questions your client might have based on your website content. # How we built it We built this by combining various technologies and APIs to achieve the goal of allowing users to communicate with an AI avatar about a website, powered by Mistral. Our tech stack includes Mistral, OpenAI Whisper, OpenVoice, Heygen, Beautiful Soup, and Framer. These technologies enabled us to build the full end-to-end product which achieves the initial goals we set out, as well as provides a smooth user experience. ## Challenges we ran into For some of these tools, it was our first time using them, and "
+    },
+    {
+      "source": "devpost",
+      "title": "AI Bill Brief",
+      "url": "https://devpost.com/software/bill_brief",
+      "meta": "Devpost",
+      "excerpt": "* * Log in * Sign up Join a hackathon Devpost Participate in our public hackathons HackathonsProjects Devpost for Teams Access your company's private hackathons Login Host a hackathon Devpost Grow your developer ecosystem and promote your platform Host a public hackathon Devpost for Teams Drive innovation, collaboration, and retention within your organization Host an internal hackathon By use case AI hackathonsCustomer hackathonsEmployee hackathonsPublic hackathons Resources Blog Insights into hackathon planning and participation Customer stories Inspiration from peers and other industry leaders Planning guides Best practices for planning online and in-person hackathons Webinars & events Upcoming events and on-demand recordings Help desk Common questions and support documentation * Join a hackathon * ##### Back * Devpost Participate in our public hackathonsHackathonsProjects Devpost for "
+    },
+    {
+      "source": "github",
+      "title": "grll/mistral-finetuning-hackathon",
+      "url": "https://github.com/grll/mistral-finetuning-hackathon",
+      "meta": "GitHub · 26★ · HTML",
+      "excerpt": "Introducing Alplex, an AI-powered virtual law office designed to assist you with legal issues based on Swiss laws # This repository has moved: [https://github.com/unit8co/mistral-hackathon-finetuning](https://github.com/unit8co/mistral-hackathon-finetuning) # Mistral Finetuning Hackathon 2024 For instructions on running the solution, [click here](#how-to-run). ## Alplex: An AI-based Virtual Law Office Introducing Alplex, an AI-powered virtual law office designed to assist you with legal issues based on Swiss laws. ### Key Features 1. **AI Legal Assistant - Dona**: - **Clarification & Summariza"
+    },
+    {
+      "source": "github",
+      "title": "unit8co/mistral-hackathon-finetuning",
+      "url": "https://github.com/unit8co/mistral-hackathon-finetuning",
+      "meta": "GitHub · 23★ · HTML",
+      "excerpt": "# Mistral Finetuning Hackathon 2024 For instructions on running the solution, [click here](#how-to-run). ## Alplex: An AI-based Virtual Law Office Introducing Alplex, an AI-powered virtual law office designed to assist you with legal issues based on Swiss laws. ### Key Features 1. **AI Legal Assistant - Dona**: - **Clarification & Summarization**: Receive your case and help summarize it. - **Technology**: Powered by an Autogen Conversable Agent and a fine-tuned Mistral 7B model. 2. **AI Paralegal - Rachel**: - **Case Classification**: Classifies your case into the correct legal category. - **"
+    },
+    {
+      "source": "github",
+      "title": "johanndiep/mistral_hackathon",
+      "url": "https://github.com/johanndiep/mistral_hackathon",
+      "meta": "GitHub · 17★ · Python",
+      "excerpt": "This repository stores the source code for the Mistral Hackathon 2024 in Paris ## Inspiration ![Drone](https://github.com/johanndiep/mistral_hackathon/blob/main/readme_img/drone.jpg?raw=true) In the fast-paced world of modern robotics, autonomous systems capture vast amounts of video data, but sifting through this information still relies heavily on human operators. This manual review process is time-consuming and mentally exhausting, limiting the efficiency and effectiveness of data utilization. ## Introduction ![Architecture](https://github.com/johanndiep/mistral_hackathon/blob/main/readme_i"
+    },
+    {
+      "source": "github",
+      "title": "colinfrisch/chathletique-mcp",
+      "url": "https://github.com/colinfrisch/chathletique-mcp",
+      "meta": "GitHub · 16★ · Python",
+      "excerpt": "Strava Coach MCP Server 🏆 MISTRAL MCP HACKATHON WINNER 🏆 # Strava Coach MCP Server ### 🏆 MISTRAL MCP HACKATHON WINNER 🏆 **@Loucienne** </n> **@leotrois** </n> **@gregoire-rouviere** </n> **@Ulysse6307** </n> **@colinfrisch** </n> A Model Context Protocol (MCP) server that provides AI assistants with access to Strava running data, route planning, and weather information. This server enables intelligent running coaching by combining Strava activity analysis with real-time weather data and route generation capabilities. ## Setup ### Prerequisites - Python 3.13+ - Active Strava account with API ac"
+    }
+  ]
+}

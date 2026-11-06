@@ -10,22 +10,24 @@ Most hackathon ideation is wasted time: generic ideas that don't use sponsors we
 
 The pipeline has three phases, each streaming progress to the frontend in real time:
 
-**Phase 1 — Sponsor Profiling** (parallel)
+**Phase 1 — Sponsor profiles**
 
-One agent per sponsor. Each one searches for the sponsor's developer docs, past hackathon tracks, prize criteria, and canonical use cases. The goal is understanding what a sponsor *actually rewards*, not just what their landing page says. Results are cached — if you've run Supabase before, Phase 1 for Supabase is instant.
+Each sponsor has a committed snapshot in `backend/corpus/` built from its official developer docs: capabilities and APIs, hero use cases, what it rewards in hackathon projects, and what's new. The goal is understanding what a sponsor *actually rewards*, not just what their landing page says. You can also paste a docs URL to add your own context.
 
-**Phase 2 — Prior Art**
+**Phase 2 — Prior art**
 
-Searches Devpost and GitHub for past projects that used each sponsor. Extracts the pattern: what problem category won, what the technical crux was, what made judges or the community care. This is the part most people skip and most often regret skipping.
+The same snapshots hold past Devpost projects and hackathon-style GitHub repos for each sponsor. Every idea must cite one of them, and the backend rewrites each citation from the corpus, so a cited project always exists. This is the part most people skip and most often regret skipping.
 
 **Phase 3 — Synthesis**
 
-Cross-references your interests and stack against sponsor capabilities and winning patterns. Generates 5–8 idea briefs, each with:
+One structured LLM call cross-references your interests and stack against sponsor capabilities and prior art. Generates 5–8 idea briefs, each with:
 - A one-line idea
 - Why this sponsor scores you points specifically
 - A prior art reference (what proved the pattern works)
 - The technical crux (what you'd actually have to build)
 - Feasibility given your stated stack
+
+Match scores are the sum of the three breakdown scores, computed in code rather than trusted from the model.
 
 ---
 
@@ -33,36 +35,26 @@ Cross-references your interests and stack against sponsor capabilities and winni
 
 ```
 [User Input]
-  Sponsors: [Browserbase, Supabase, Groq]
-  Interests: WebRTC, real-time apps
+  Sponsors: [Groq, Supabase, Anthropic]
+  Interests: agents, real-time apps
   Stack: Python, React
   Theme: "AI productivity tools"
         │
         ▼
 ┌─────────────────────────────────────────┐
-│    PHASE 1: Sponsor Profiling           │
-│           (parallel agents)             │
+│    PHASES 1–2: Load snapshots           │
 │                                         │
-│  Agent(Browserbase) → profile + prizes  │
-│  Agent(Supabase)    → profile + prizes  │
-│  Agent(Groq)        → profile + prizes  │
+│  backend/corpus/<sponsor>.json          │
+│  profile + Devpost/GitHub prior art     │
+│  (+ optional user-supplied docs URLs)   │
 └──────────────────┬──────────────────────┘
                    │
                    ▼
 ┌─────────────────────────────────────────┐
-│    PHASE 2: Prior Art Research          │
-│                                         │
-│  Search Devpost + GitHub per sponsor    │
-│  Extract: problem category, tech used,  │
-│           judge/community signals       │
-└──────────────────┬──────────────────────┘
-                   │
-                   ▼
-┌─────────────────────────────────────────┐
-│    PHASE 3: Synthesis                   │
+│    PHASE 3: Synthesis (one LLM call)    │
 │                                         │
 │  user interests ∩ sponsor capabilities  │
-│  ∩ winning patterns → ranked briefs     │
+│  ∩ prior art → ranked briefs            │
 └──────────────────┬──────────────────────┘
                    │
                    ▼
@@ -75,24 +67,22 @@ Cross-references your interests and stack against sponsor capabilities and winni
 |---|---|---|
 | Frontend | React + Vite | Fast dev loop, SSE works cleanly |
 | Backend | FastAPI | Fits the Python agent layer, native async, SSE is first-class |
-| Agents | OpenAI Agents SDK | Parallel agent dispatch, web search built in |
-| Sponsor cache | ChromaDB | Stores reusable sponsor profiles with TTL-based refresh |
+| LLM | OpenAI SDK, structured output | One call, schema-validated ideas; the only runtime key |
+| Sponsor data | Committed JSON snapshots | No runtime scraping; refreshed offline by a script |
 | Job state | Request-local memory | Session-scoped, doesn't need durability |
-| Infra | Docker Compose | Runs frontend, backend, and ChromaDB locally |
+| Infra | Docker Compose | Runs frontend and backend locally |
 
 ---
 
 ## The streaming UX
 
-The pipeline takes 30–60 seconds. A spinner is wrong — it turns the research into a black box and erodes trust. Instead, the frontend renders events as they arrive from the SSE stream:
+The synthesis call takes a while. A spinner is wrong — it turns the research into a black box and erodes trust. Instead, the frontend renders events as they arrive from the SSE stream:
 
 ```
-→ Profiling Browserbase...
-→ Browserbase: 3 past prize tracks, hero use case is browser automation
-→ Profiling Supabase...
-→ Searching Devpost for Supabase winners...
-→ Found 12 relevant past projects
-→ Synthesizing ideas...
+→ Groq: sponsor profile loaded (snapshot 2026-11-07)
+→ Supabase: sponsor profile loaded (snapshot 2026-11-07)
+→ Groq: 4 devpost, 4 github prior-art project(s) on file
+→ Generating idea seeds from sponsor profiles and prior art
 → [idea brief 1]
 → [idea brief 2]
    ...
@@ -102,18 +92,23 @@ Watching the reasoning unfold is part of the value. You see *why* an idea was re
 
 ---
 
-## Sponsor profile cache
+## Sponsor snapshot corpus
 
-Profiling a sponsor is the most expensive step and the most reusable. Once a sponsor is profiled, the result is stored in ChromaDB with the sponsor name as metadata. The next run that includes the same sponsor skips Phase 1 entirely. Cache invalidation is weekly by default, or on-demand.
+Researching a sponsor live is the most expensive and least reliable step, and sponsor docs change slowly. So the research is done ahead of time: `scripts/refresh_corpus.py` reads each sponsor's docs, finds past Devpost and GitHub projects, and writes `backend/corpus/<sponsor>.json`. Those files are committed, so a run needs no scraping keys and no database. Its only network call is the LLM (plus an optional keyless fetch if you paste custom docs URLs).
 
-Over time this builds a sponsor knowledge base that compounds by skipping repeat profiling work for sponsors you have already researched. The current cache stores profiles by normalized sponsor name with a placeholder embedding; it is not a semantic similarity index.
+The trade-off is staleness: a snapshot is only as fresh as its last refresh (each file records its date). Re-run the script when you want newer data.
 
 ---
 
 ## Running locally
 
+The app needs one key. Copy `.env.example` to `.env.local` in the repo root and set `OPENAI_API_KEY`. Or leave it unset and paste your own key into the sidebar; it is sent per request in a header, kept only in that browser tab, and never stored by the server.
+
 ```bash
-# Backend
+# Backend (handles venv, deps, and port cleanup)
+./backend/start.sh
+
+# …or manually, from the repo root
 pip install -r backend/requirements.txt
 uvicorn backend.main:app --port 8080 --reload
 
@@ -123,10 +118,18 @@ npm install
 npm run dev
 ```
 
-Docker Compose covers the frontend, backend, and ChromaDB for full-stack local development:
+Docker Compose runs the frontend and backend together:
 
 ```bash
 docker compose up
+```
+
+To refresh the sponsor snapshots (maintainers only; needs `OPENAI_API_KEY`):
+
+```bash
+pip install -r scripts/requirements.txt
+python scripts/refresh_corpus.py            # all sponsors
+python scripts/refresh_corpus.py supabase   # just one
 ```
 
 ---
@@ -137,12 +140,15 @@ docker compose up
 open-research/
 ├── backend/
 │   ├── agents/
-│   │   ├── sponsor_profiler.py   # per-sponsor parallel agents
-│   │   ├── prior_art.py          # Devpost + GitHub prior-art search
-│   │   └── synthesizer.py        # cross-ref + brief generation
+│   │   └── synthesizer.py        # prompt, LLM call, Pydantic models, citation grounding
+│   ├── core/
+│   │   └── corpus.py             # snapshot loading + user-supplied docs fetch
+│   ├── corpus/                   # committed per-sponsor snapshots
 │   ├── routers/
-│   │   └── research.py           # config preflight + SSE endpoint
+│   │   └── research.py           # config + SSE endpoint
 │   └── main.py
+├── scripts/
+│   └── refresh_corpus.py         # rebuilds the snapshots
 ├── frontend/
 │   └── src/
 │       # input form, streaming log panel, brief cards

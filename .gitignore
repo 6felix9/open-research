@@ -55,8 +55,5 @@ Thumbs.db
 *.swo
 *~
 
-# ChromaDB
-backend/chroma_db/
-
 # Docker
 *.env.docker
