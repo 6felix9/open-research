@@ -69,7 +69,7 @@ function App() {
         return
       }
     } catch {
-      setLogs([{ id: '0', step: '00 · CONFIG', text: 'Cannot start: failed to reach the backend — is it running on :8080?', final: true, error: true }])
+      setLogs([{ id: '0', step: '00 · CONFIG', text: 'Cannot start: the research backend is not reachable. This deployment is frontend-only.', final: true, error: true }])
       setRunState('error')
       return
     }
